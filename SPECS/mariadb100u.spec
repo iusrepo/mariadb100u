@@ -2,10 +2,14 @@
 %global pkgname      mariadb
 %global pkgnamepatch mariadb
 
+%global basever 10.0
+%global real_name mariadb
+%global ius_suffix 100u
+
 # Regression tests may take a long time (many cores recommended), skip them by 
 # passing --nocheck to rpmbuild or by setting runselftest to 0 if defining
 # --nocheck is not possible (e.g. in koji build)
-%{!?runselftest:%global runselftest 1}
+%{!?runselftest:%global runselftest 0}
 
 # In f20+ use unversioned docdirs, otherwise the old versioned one
 %{!?_pkgdocdir: %global _pkgdocdir %{_docdir}/%{name}-%{version}}
@@ -20,7 +24,8 @@
 # TokuDB engine is now part of MariaDB, but it is available only for x86_64;
 # variable tokudb allows to build with TokuDB storage engine
 # Temporarily disabled in F21+ for https://mariadb.atlassian.net/browse/MDEV-6446
-%ifarch 0%{?fedora} < 21 #x86_64
+
+%if 0%{?fedora} < 21 || 0%{?rhel} < 7
 %bcond_without tokudb
 %else
 %bcond_with tokudb
@@ -47,10 +52,10 @@
 %bcond_without config
 
 # Include files for SysV init or systemd
-%if 0%{?fedora} >= 15
+%if 0%{?fedora} >= 15 || 0%{?rhel} >= 7
 %bcond_without init_systemd
 %bcond_with init_sysv
-%global daemon_name %{name}
+%global daemon_name %{real_name}
 # Provide temporary service file name that will be removed after some time
 # (Fedora 22?)
 %global mysqld_unit mysqld
@@ -94,14 +99,13 @@
 %global mysqld_running_flag_file %{_localstatedir}/lib/rpm-state/mysqld_running
 
 # Make long macros shorter
-%global sameevr   %{epoch}:%{version}-%{release}
+%global sameevr   %{version}-%{release}
 %global compatver 10.0
 %global bugfixver 13
 
-Name:             %{pkgname}
+Name:             %{real_name}%{?ius_suffix} 
 Version:          %{compatver}.%{bugfixver}
-Release:          4%{?dist}
-Epoch:            1
+Release:          1.ius%{?dist}
 
 Summary:          A community developed branch of MySQL
 Group:            Applications/Databases
@@ -187,13 +191,17 @@ Requires:         %{name}-common%{?_isa} = %{sameevr}
 
 Provides:         mysql = %{sameevr}
 Provides:         mysql%{?_isa} = %{sameevr}
+Provides:         %{real_name} = %{sameevr}
+Provides:         %{real_name}%{?_isa} = %{sameevr}
 Provides:         mysql-compat-client = %{sameevr}
 Provides:         mysql-compat-client%{?_isa} = %{sameevr}
+
 
 # MySQL (with caps) is upstream's spelling of their own RPMs for mysql
 %{?obsoleted_mysql_case_evr:Obsoletes: MySQL < %{obsoleted_mysql_case_evr}}
 %{?obsoleted_mysql_evr:Obsoletes: mysql < %{obsoleted_mysql_evr}}
 Conflicts:        community-mysql
+Conflicts:        mysql < %{basever}
 
 # Filtering: https://fedoraproject.org/wiki/Packaging:AutoProvidesAndRequiresFiltering
 %if 0%{?fedora} > 14 || 0%{?rhel} > 6
@@ -220,6 +228,13 @@ Group:            Applications/Databases
 Requires:         %{name}-common%{?_isa} = %{sameevr}
 Provides:         mysql-libs = %{sameevr}
 Provides:         mysql-libs%{?_isa} = %{sameevr}
+Provides:         %{real_name}-libs = %{sameevr}
+Provides:         %{real_name}-libs%{?_isa} = %{sameevr}
+Provides:         config(%{real_name}-libs) = %{sameevr}
+Conflicts:        MySQL-libs
+Conflicts:        mysql-libs < %{basever}
+Conflicts:        mariadb-libs < %{basever}
+Conflicts:        mariadb-libs > 1:5.5
 %{?obsoleted_mysql_case_evr:Obsoletes: MySQL-libs < %{obsoleted_mysql_case_evr}}
 %{?obsoleted_mysql_evr:Obsoletes: mysql-libs < %{obsoleted_mysql_evr}}
 
@@ -294,8 +309,15 @@ Requires:         perl(DBI)
 Requires:         perl(DBD::mysql)
 Provides:         mysql-server = %{sameevr}
 Provides:         mysql-server%{?_isa} = %{sameevr}
+Provides:         %{real_name}-server = %{sameevr}
+Provides:         %{real_name}-server%{?_isa} = %{sameevr}
+Provides:         config(%{real_name}-server) = %{sameevr}
 Provides:         mysql-compat-server = %{sameevr}
 Provides:         mysql-compat-server%{?_isa} = %{sameevr}
+Conflicts:        MySQL-server
+Conflicts:        community-mysql-server
+Conflicts:        mysql-server < %{basever}
+
 %{?obsoleted_mysql_case_evr:Obsoletes: MySQL-server < %{obsoleted_mysql_case_evr}}
 Conflicts:        community-mysql-server
 Conflicts:        mariadb-galera-server
@@ -335,6 +357,10 @@ Requires:         %{name}-libs%{?_isa} = %{sameevr}
 Requires:         openssl-devel%{?_isa}
 Provides:         mysql-devel = %{sameevr}
 Provides:         mysql-devel%{?_isa} = %{sameevr}
+Provides:         %{real_name}-devel = %{sameevr}
+Provides:         %{real_name}-devel%{?_isa} = %{sameevr}
+Conflicts:        MySQL-devel
+Conflicts:        mysql-devel < %{basever}
 %{?obsoleted_mysql_case_evr:Obsoletes: MySQL-devel < %{obsoleted_mysql_case_evr}}
 %{?obsoleted_mysql_evr:Obsoletes: mysql-devel < %{obsoleted_mysql_evr}}
 Conflicts:        community-mysql-devel
@@ -355,6 +381,10 @@ Requires:         %{name}-common%{?_isa} = %{sameevr}
 Requires:         %{name}-errmsg%{?_isa} = %{sameevr}
 Provides:         mysql-embedded = %{sameevr}
 Provides:         mysql-embedded%{?_isa} = %{sameevr}
+Provides:         %{real_name}-embedded = %{sameevr}
+Provides:         %{real_name}-embedded%{?_isa} = %{sameevr}
+Conflicts:        MySQL-embedded
+Obsoletes:        mysql-embedded < %{basever}
 %{?obsoleted_mysql_case_evr:Obsoletes: MySQL-embedded < %{obsoleted_mysql_case_evr}}
 %{?obsoleted_mysql_evr:Obsoletes: mysql-embedded < %{obsoleted_mysql_evr}}
 
@@ -372,6 +402,10 @@ Requires:         %{name}-embedded%{?_isa} = %{sameevr}
 Requires:         %{name}-devel%{?_isa} = %{sameevr}
 Provides:         mysql-embedded-devel = %{sameevr}
 Provides:         mysql-embedded-devel%{?_isa} = %{sameevr}
+Provides:         %{real_name}-embedded-devel = %{sameevr}
+Provides:         %{real_name}-embedded-devel%{?_isa} = %{sameevr}
+Conflicts:        MySQL-embedded-devel
+Conflicts:        mysql-embedded-devel < %{basever}
 Conflicts:        community-mysql-embedded-devel
 %{?obsoleted_mysql_case_evr:Obsoletes: MySQL-embedded-devel < %{obsoleted_mysql_case_evr}}
 %{?obsoleted_mysql_evr:Obsoletes: mysql-embedded-devel < %{obsoleted_mysql_evr}}
@@ -391,6 +425,11 @@ Group:            Applications/Databases
 Requires:         %{name}%{?_isa} = %{sameevr}
 Provides:         mysql-bench = %{sameevr}
 Provides:         mysql-bench%{?_isa} = %{sameevr}
+Provides:         %{real_name}-bench = %{sameevr}
+Provides:         %{real_name}-bench%{?_isa} = %{sameevr}
+Conflicts:        MySQL-bench
+Conflicts:        mysql-bench < %{basever}
+
 Conflicts:        community-mysql-bench
 %{?obsoleted_mysql_case_evr:Obsoletes: MySQL-bench < %{obsoleted_mysql_case_evr}}
 %{?obsoleted_mysql_evr:Obsoletes: mysql-bench < %{obsoleted_mysql_evr}}
@@ -424,6 +463,11 @@ Requires:         perl(Time::HiRes)
 Conflicts:        community-mysql-test
 Provides:         mysql-test = %{sameevr}
 Provides:         mysql-test%{?_isa} = %{sameevr}
+Provides:         %{real_name}-test = %{sameevr}
+Provides:         %{real_name}-test%{?_isa} = %{sameevr}
+Conflicts:        community-mysql-test
+Conflicts:        MySQL-test
+Conflicts:        mysql-test < %{basever}
 %{?obsoleted_mysql_case_evr:Obsoletes: MySQL-test < %{obsoleted_mysql_case_evr}}
 %{?obsoleted_mysql_evr:Obsoletes: mysql-test < %{obsoleted_mysql_evr}}
 
@@ -546,13 +590,13 @@ cmake .  -DBUILD_CONFIG=mysql_release \
          -DINSTALL_INFODIR=share/info \
          -DINSTALL_LIBDIR="%{_lib}/mysql" \
          -DINSTALL_MANDIR=share/man \
-         -DINSTALL_MYSQLSHAREDIR=share/%{name} \
+         -DINSTALL_MYSQLSHAREDIR=share/%{real_name} \
          -DINSTALL_MYSQLTESTDIR=share/mysql-test \
          -DINSTALL_PLUGINDIR="%{_lib}/mysql/plugin" \
          -DINSTALL_SBINDIR=libexec \
          -DINSTALL_SCRIPTDIR=bin \
          -DINSTALL_SQLBENCHDIR=share \
-         -DINSTALL_SUPPORTFILESDIR=share/%{name} \
+         -DINSTALL_SUPPORTFILESDIR=share/%{real_name} \
          -DMYSQL_DATADIR="%{_localstatedir}/lib/mysql" \
          -DMYSQL_UNIX_ADDR="%{_localstatedir}/lib/mysql/mysql.sock" \
          -DENABLED_LOCAL_INFILE=ON \
@@ -562,11 +606,14 @@ cmake .  -DBUILD_CONFIG=mysql_release \
          -DWITH_SSL=system \
          -DWITH_ZLIB=system \
 %{?with_pcre: -DWITH_PCRE=system}\
-         -DWITH_JEMALLOC=no \
-%{!?with_tokudb: -DWITHOUT_TOKUDB=ON}\
+%{!?with_tokudb: -DWITHOUT_TOKUDB=ON\ 
+        -DWITH_JEMALLOC=no}\
          -DTMPDIR=/var/tmp \
          %{?_hardened_build:-DWITH_MYSQLD_LDFLAGS="-pie -Wl,-z,relro,-z,now"}
 
+
+#%{!?with_tokudb: -DWITHOUT_TOKUDB=ON}\
+         #-DWITH_JEMALLOC=no \
 make %{?_smp_mflags} VERBOSE=1
 
 # debuginfo extraction scripts fail to find source files in their real
@@ -635,7 +682,7 @@ rm -f %{buildroot}%{_sysconfdir}/my.cnf
 # install systemd unit files and scripts for handling server startup
 %if %{with init_systemd}
 install -D -p -m 644 scripts/mysql.service %{buildroot}%{_unitdir}/%{daemon_name}.service
-install -D -p -m 0644 scripts/mysql.tmpfiles.d %{buildroot}%{_tmpfilesdir}/%{name}.conf
+install -D -p -m 0644 scripts/mysql.tmpfiles.d %{buildroot}%{_tmpfilesdir}/%{real_name}.conf
 %endif
 
 # install alternative systemd unit file for compatibility reasons
@@ -674,22 +721,22 @@ ln -s ../../../../../bin/my_safe_process %{buildroot}%{_datadir}/mysql-test/lib/
 # should move this to /etc/ ?
 rm -f %{buildroot}%{_bindir}/mysql_embedded
 rm -f %{buildroot}%{_libdir}/mysql/*.a
-rm -f %{buildroot}%{_datadir}/%{name}/binary-configure
-rm -f %{buildroot}%{_datadir}/%{name}/magic
-rm -f %{buildroot}%{_datadir}/%{name}/ndb-config-2-node.ini
-rm -f %{buildroot}%{_datadir}/%{name}/mysql.server
-rm -f %{buildroot}%{_datadir}/%{name}/mysqld_multi.server
+rm -f %{buildroot}%{_datadir}/%{real_name}/binary-configure
+rm -f %{buildroot}%{_datadir}/%{real_name}/magic
+rm -f %{buildroot}%{_datadir}/%{real_name}/ndb-config-2-node.ini
+rm -f %{buildroot}%{_datadir}/%{real_name}/mysql.server
+rm -f %{buildroot}%{_datadir}/%{real_name}/mysqld_multi.server
 rm -f %{buildroot}%{_mandir}/man1/mysql-stress-test.pl.1*
 rm -f %{buildroot}%{_mandir}/man1/mysql-test-run.pl.1*
 rm -f %{buildroot}%{_bindir}/mytop
 
 # put logrotate script where it needs to be
 mkdir -p %{buildroot}%{logrotateddir}
-mv %{buildroot}%{_datadir}/%{name}/mysql-log-rotate %{buildroot}%{logrotateddir}/%{daemon_name}
+mv %{buildroot}%{_datadir}/%{real_name}/mysql-log-rotate %{buildroot}%{logrotateddir}/%{daemon_name}
 chmod 644 %{buildroot}%{logrotateddir}/%{daemon_name}
 
 mkdir -p %{buildroot}%{_sysconfdir}/ld.so.conf.d
-echo "%{_libdir}/mysql" > %{buildroot}%{_sysconfdir}/ld.so.conf.d/%{name}-%{_arch}.conf
+echo "%{_libdir}/mysql" > %{buildroot}%{_sysconfdir}/ld.so.conf.d/%{real_name}-%{_arch}.conf
 
 # copy additional docs into build tree so %%doc will find them
 install -p -m 0644 %{SOURCE5} %{basename:%{SOURCE5}}
@@ -701,7 +748,7 @@ install -p -m 0644 %{SOURCE16} %{basename:%{SOURCE16}}
 install -p -m 0644 mysql-test/rh-skipped-tests.list %{buildroot}%{_datadir}/mysql-test
 
 # remove unneeded RHEL-4 SELinux stuff
-rm -rf %{buildroot}%{_datadir}/%{name}/SELinux/
+rm -rf %{buildroot}%{_datadir}/%{real_name}/SELinux/
 
 # remove SysV init script
 rm -f %{buildroot}%{_sysconfdir}/init.d/mysql
@@ -710,7 +757,7 @@ rm -f %{buildroot}%{_sysconfdir}/init.d/mysql
 rm -f %{buildroot}%{logrotateddir}/mysql
 
 # remove solaris files
-rm -rf %{buildroot}%{_datadir}/%{name}/solaris/
+rm -rf %{buildroot}%{_datadir}/%{real_name}/solaris/
 
 %if %{without clibrary}
 rm -rf %{buildroot}%{_libdir}/mysql/libmysqlclient*.so.*
@@ -748,11 +795,11 @@ rm -f %{buildroot}%{_sysconfdir}/my.cnf.d/mysql-clients.cnf
 %endif
 
 %if %{without common}
-rm -rf %{buildroot}%{_datadir}/%{name}/charsets
+rm -rf %{buildroot}%{_datadir}/%{real_name}/charsets
 %endif
 
 %if %{without errmsg}
-rm -rf %{buildroot}%{_datadir}/%{name}/{english,czech,danish,dutch,estonian,\
+rm -rf %{buildroot}%{_datadir}/%{real_name}/{english,czech,danish,dutch,estonian,\
 french,german,greek,hungarian,italian,japanese,korean,norwegian,norwegian-ny,\
 polish,portuguese,romanian,russian,serbian,slovak,spanish,swedish,ukrainian}
 %endif
@@ -940,35 +987,35 @@ fi
 %files common
 %doc README COPYING COPYING.LESSER README.mysql-license README.mysql-docs
 %doc storage/innobase/COPYING.Percona storage/innobase/COPYING.Google
-%dir %{_datadir}/%{name}
-%{_datadir}/%{name}/charsets
+%dir %{_datadir}/%{real_name}
+%{_datadir}/%{real_name}/charsets
 %endif
 
 %if %{with errmsg}
 %files errmsg
-%{_datadir}/%{name}/english
-%lang(cs) %{_datadir}/%{name}/czech
-%lang(da) %{_datadir}/%{name}/danish
-%lang(nl) %{_datadir}/%{name}/dutch
-%lang(et) %{_datadir}/%{name}/estonian
-%lang(fr) %{_datadir}/%{name}/french
-%lang(de) %{_datadir}/%{name}/german
-%lang(el) %{_datadir}/%{name}/greek
-%lang(hu) %{_datadir}/%{name}/hungarian
-%lang(it) %{_datadir}/%{name}/italian
-%lang(ja) %{_datadir}/%{name}/japanese
-%lang(ko) %{_datadir}/%{name}/korean
-%lang(no) %{_datadir}/%{name}/norwegian
-%lang(no) %{_datadir}/%{name}/norwegian-ny
-%lang(pl) %{_datadir}/%{name}/polish
-%lang(pt) %{_datadir}/%{name}/portuguese
-%lang(ro) %{_datadir}/%{name}/romanian
-%lang(ru) %{_datadir}/%{name}/russian
-%lang(sr) %{_datadir}/%{name}/serbian
-%lang(sk) %{_datadir}/%{name}/slovak
-%lang(es) %{_datadir}/%{name}/spanish
-%lang(sv) %{_datadir}/%{name}/swedish
-%lang(uk) %{_datadir}/%{name}/ukrainian
+%{_datadir}/%{real_name}/english
+%lang(cs) %{_datadir}/%{real_name}/czech
+%lang(da) %{_datadir}/%{real_name}/danish
+%lang(nl) %{_datadir}/%{real_name}/dutch
+%lang(et) %{_datadir}/%{real_name}/estonian
+%lang(fr) %{_datadir}/%{real_name}/french
+%lang(de) %{_datadir}/%{real_name}/german
+%lang(el) %{_datadir}/%{real_name}/greek
+%lang(hu) %{_datadir}/%{real_name}/hungarian
+%lang(it) %{_datadir}/%{real_name}/italian
+%lang(ja) %{_datadir}/%{real_name}/japanese
+%lang(ko) %{_datadir}/%{real_name}/korean
+%lang(no) %{_datadir}/%{real_name}/norwegian
+%lang(no) %{_datadir}/%{real_name}/norwegian-ny
+%lang(pl) %{_datadir}/%{real_name}/polish
+%lang(pt) %{_datadir}/%{real_name}/portuguese
+%lang(ro) %{_datadir}/%{real_name}/romanian
+%lang(ru) %{_datadir}/%{real_name}/russian
+%lang(sr) %{_datadir}/%{real_name}/serbian
+%lang(sk) %{_datadir}/%{real_name}/slovak
+%lang(es) %{_datadir}/%{real_name}/spanish
+%lang(sv) %{_datadir}/%{real_name}/swedish
+%lang(uk) %{_datadir}/%{real_name}/ukrainian
 %endif
 
 %files server
@@ -1044,14 +1091,14 @@ fi
 %{_mandir}/man1/mysql_tzinfo_to_sql.1*
 %{_mandir}/man8/mysqld.8*
 
-%{_datadir}/%{name}/errmsg-utf8.txt
-%{_datadir}/%{name}/fill_help_tables.sql
-%{_datadir}/%{name}/install_spider.sql
-%{_datadir}/%{name}/mysql_system_tables.sql
-%{_datadir}/%{name}/mysql_system_tables_data.sql
-%{_datadir}/%{name}/mysql_test_data_timezone.sql
-%{_datadir}/%{name}/mysql_performance_tables.sql
-%{_datadir}/%{name}/my-*.cnf
+%{_datadir}/%{real_name}/errmsg-utf8.txt
+%{_datadir}/%{real_name}/fill_help_tables.sql
+%{_datadir}/%{real_name}/install_spider.sql
+%{_datadir}/%{real_name}/mysql_system_tables.sql
+%{_datadir}/%{real_name}/mysql_system_tables_data.sql
+%{_datadir}/%{real_name}/mysql_test_data_timezone.sql
+%{_datadir}/%{real_name}/mysql_performance_tables.sql
+%{_datadir}/%{real_name}/my-*.cnf
 
 %{?mysqld_unit:%{_unitdir}/%{mysqld_unit}.service}
 %{?mysqld_unit:%{_unitdir}/%{daemon_name}.service.d/mysql-compat.conf}
@@ -1062,7 +1109,7 @@ fi
 %{_libexecdir}/mysql-check-socket
 %{_libexecdir}/mysql-scripts-common
 
-%{?with_init_systemd:%{_tmpfilesdir}/%{name}.conf}
+%{?with_init_systemd:%{_tmpfilesdir}/%{real_name}.conf}
 %{?mysqld_unit:%attr(0755,mysql,mysql) %dir %{_localstatedir}/run/%{mysqld_unit}}
 %attr(0755,mysql,mysql) %dir %{_localstatedir}/run/%{daemon_name}
 %attr(0755,mysql,mysql) %dir %{_localstatedir}/lib/mysql
@@ -1116,6 +1163,9 @@ fi
 %endif
 
 %changelog
+* Tue Aug 26 2014 Ben Harper <ben.harper@rackspace.com> - 10.0.13-1
+- inital port from fedora SRPM
+
 * Tue Aug 19 2014 Honza Horak <hhorak@redhat.com> - 1:10.0.13-4
 - Build config subpackage everytime
 - Disable failing tests: innodb_simulate_comp_failures_small, key_cache
