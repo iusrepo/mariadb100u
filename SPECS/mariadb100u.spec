@@ -105,7 +105,7 @@
 
 Name:             %{real_name}%{?ius_suffix} 
 Version:          %{compatver}.%{bugfixver}
-Release:          1.ius%{?dist}
+Release:          2.ius%{?dist}
 
 Summary:          A community developed branch of MySQL
 Group:            Applications/Databases
@@ -230,11 +230,13 @@ Provides:         mysql-libs = %{sameevr}
 Provides:         mysql-libs%{?_isa} = %{sameevr}
 Provides:         %{real_name}-libs = %{sameevr}
 Provides:         %{real_name}-libs%{?_isa} = %{sameevr}
+%if %{without config}
 Provides:         config(%{real_name}-libs) = %{sameevr}
+%endif
 Conflicts:        MySQL-libs
 Conflicts:        mysql-libs < %{basever}
 Conflicts:        mariadb-libs < %{basever}
-Conflicts:        mariadb-libs > 1:5.5
+Conflicts:        1:mariadb-libs >= 1:5.5
 %{?obsoleted_mysql_case_evr:Obsoletes: MySQL-libs < %{obsoleted_mysql_case_evr}}
 %{?obsoleted_mysql_evr:Obsoletes: mysql-libs < %{obsoleted_mysql_evr}}
 
@@ -250,6 +252,11 @@ to a MariaDB/MySQL server. MariaDB is a community developed branch of MySQL.
 %package          config
 Summary:          The config files required by server and client
 Group:            Applications/Databases
+Conflicts:        1:mariadb-libs >= 1:5.5
+Provides:         config(%{real_name}-libs) = %{sameevr}
+Provides:         %{real_name}-config = %{sameevr}
+Provides:         %{real_name}-config%{?_isa} = %{sameevr}
+
 
 %description      config
 The package provides the config file my.cnf and my.cnf.d directory used by any
@@ -263,7 +270,11 @@ package itself.
 %package          common
 Summary:          The shared files required by server and client
 Group:            Applications/Databases
-Requires:         %{_sysconfdir}/my.cnf
+Requires:         %{name}-config = %{sameevr}
+#Requires:         %{_sysconfdir}/my.cnf
+Requires:         %{name}-config  = %{sameevr}
+Provides:         %{real_name}-common = %{sameevr}
+Provides:         %{real_name}-common%{?_isa} = %{sameevr}
 
 %description      common
 The package provides the essential shared files for any MariaDB program.
@@ -276,6 +287,8 @@ You will need to install this package to use any other MariaDB package.
 Summary:          The error messages files required by server and embedded
 Group:            Applications/Databases
 Requires:         %{name}-common%{?_isa} = %{sameevr}
+Provides:         %{real_name}-errmsg = %{sameevr}
+Provides:         %{real_name}-errmsg%{?_isa} = %{sameevr}
 
 %description      errmsg
 The package provides error messages files for the MariaDB daemon and the
@@ -291,8 +304,12 @@ Group:            Applications/Databases
 # note: no version here = %%{version}-%%{release}
 Requires:         mysql-compat-client%{?_isa}
 Requires:         %{name}-common%{?_isa} = %{sameevr}
+%if %{with config}
+Requires:         %{name}-config%{?_isa} = %{sameevr}
+%else
 Requires:         %{_sysconfdir}/my.cnf
 Requires:         %{_sysconfdir}/my.cnf.d
+%endif
 Requires:         %{name}-errmsg%{?_isa} = %{sameevr}
 Requires:         sh-utils
 Requires(pre):    /usr/sbin/useradd
@@ -1163,6 +1180,9 @@ fi
 %endif
 
 %changelog
+* Thu Sep 04 2014 Ben Harper <ben.harper@rackspace.com> - 10.0.13-2
+- tweaking and adding Conflicts, Requires and Provides
+
 * Tue Aug 26 2014 Ben Harper <ben.harper@rackspace.com> - 10.0.13-1
 - inital port from fedora SRPM
 
