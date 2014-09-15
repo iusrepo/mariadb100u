@@ -99,13 +99,14 @@
 %global mysqld_running_flag_file %{_localstatedir}/lib/rpm-state/mysqld_running
 
 # Make long macros shorter
-%global sameevr   %{version}-%{release}
+%global sameevr   %{epoch}:%{version}-%{release}
 %global compatver 10.0
 %global bugfixver 13
 
-Name:             %{real_name}%{?ius_suffix} 
+Name:             %{real_name}%{?ius_suffix}
 Version:          %{compatver}.%{bugfixver}
-Release:          2.ius%{?dist}
+Release:          3.ius%{?dist}
+Epoch:            1
 
 Summary:          A community developed branch of MySQL
 Group:            Applications/Databases
@@ -252,6 +253,10 @@ to a MariaDB/MySQL server. MariaDB is a community developed branch of MySQL.
 %package          config
 Summary:          The config files required by server and client
 Group:            Applications/Databases
+Conflicts:        MySQL-libs
+Conflicts:        mysql-libs < %{basever}
+Conflicts:        mariadb-libs < %{basever}
+Conflicts:        mariadb-libs >= 1:5.5
 Conflicts:        1:mariadb-libs >= 1:5.5
 Provides:         config(%{real_name}-libs) = %{sameevr}
 Provides:         %{real_name}-config = %{sameevr}
@@ -1180,6 +1185,9 @@ fi
 %endif
 
 %changelog
+* Mon Sep 15 2014 Ben Harper <ben.harper@rackspace.com> - 10.0.13-3
+- readding epoch as conflicts were not working correctly
+
 * Thu Sep 04 2014 Ben Harper <ben.harper@rackspace.com> - 10.0.13-2
 - tweaking and adding Conflicts, Requires and Provides
 
