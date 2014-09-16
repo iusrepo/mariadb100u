@@ -105,7 +105,7 @@
 
 Name:             %{real_name}%{?ius_suffix}
 Version:          %{compatver}.%{bugfixver}
-Release:          3.ius%{?dist}
+Release:          4.ius%{?dist}
 Epoch:            1
 
 Summary:          A community developed branch of MySQL
@@ -256,8 +256,9 @@ Group:            Applications/Databases
 Conflicts:        MySQL-libs
 Conflicts:        mysql-libs < %{basever}
 Conflicts:        mariadb-libs < %{basever}
-Conflicts:        mariadb-libs >= 1:5.5
-Conflicts:        1:mariadb-libs >= 1:5.5
+Conflicts:        mariadb-libs < 1:%{basever}
+Conflicts:        1:mariadb-libs < %{basever}
+Conflicts:        1:mariadb-libs < 1:%{basever}
 Provides:         config(%{real_name}-libs) = %{sameevr}
 Provides:         %{real_name}-config = %{sameevr}
 Provides:         %{real_name}-config%{?_isa} = %{sameevr}
@@ -1185,6 +1186,9 @@ fi
 %endif
 
 %changelog
+* Tue Sep 16 2014 Ben Harper <ben.harper@rackspace.com> - 10.0.13-4.ius
+- more tweaks to Conflicts
+
 * Mon Sep 15 2014 Ben Harper <ben.harper@rackspace.com> - 10.0.13-3
 - readding epoch as conflicts were not working correctly
 
