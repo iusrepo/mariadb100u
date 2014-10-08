@@ -9,7 +9,7 @@
 # Regression tests may take a long time (many cores recommended), skip them by 
 # passing --nocheck to rpmbuild or by setting runselftest to 0 if defining
 # --nocheck is not possible (e.g. in koji build)
-%{!?runselftest:%global runselftest 0}
+%{!?runselftest:%global runselftest 1}
 
 # In f20+ use unversioned docdirs, otherwise the old versioned one
 %{!?_pkgdocdir: %global _pkgdocdir %{_docdir}/%{name}-%{version}}
@@ -101,11 +101,11 @@
 # Make long macros shorter
 %global sameevr   %{epoch}:%{version}-%{release}
 %global compatver 10.0
-%global bugfixver 13
+%global bugfixver 14
 
 Name:             %{real_name}%{?ius_suffix}
 Version:          %{compatver}.%{bugfixver}
-Release:          4.ius%{?dist}
+Release:          1.ius%{?dist}
 Epoch:            1
 
 Summary:          A community developed branch of MySQL
@@ -184,6 +184,7 @@ BuildRequires:    perl(Sys::Hostname)
 BuildRequires:    perl(Test::More)
 BuildRequires:    perl(Time::HiRes)
 %{?with_init_systemd:BuildRequires: systemd}
+BuildRequires:    jemalloc-devel
 
 Requires:         bash
 Requires:         fileutils
@@ -237,7 +238,7 @@ Provides:         config(%{real_name}-libs) = %{sameevr}
 Conflicts:        MySQL-libs
 Conflicts:        mysql-libs < %{basever}
 Conflicts:        mariadb-libs < %{basever}
-Conflicts:        1:mariadb-libs >= 1:5.5
+Conflicts:        %{epoch}:mariadb-libs >= 1:5.5
 %{?obsoleted_mysql_case_evr:Obsoletes: MySQL-libs < %{obsoleted_mysql_case_evr}}
 %{?obsoleted_mysql_evr:Obsoletes: mysql-libs < %{obsoleted_mysql_evr}}
 
@@ -256,9 +257,9 @@ Group:            Applications/Databases
 Conflicts:        MySQL-libs
 Conflicts:        mysql-libs < %{basever}
 Conflicts:        mariadb-libs < %{basever}
-Conflicts:        mariadb-libs < 1:%{basever}
-Conflicts:        1:mariadb-libs < %{basever}
-Conflicts:        1:mariadb-libs < 1:%{basever}
+Conflicts:        mariadb-libs < %{epoch}:%{basever}
+Conflicts:        %{epoch}:mariadb-libs < %{basever}
+Conflicts:        %{epoch}:mariadb-libs < %{epoch}:%{basever}
 Provides:         config(%{real_name}-libs) = %{sameevr}
 Provides:         %{real_name}-config = %{sameevr}
 Provides:         %{real_name}-config%{?_isa} = %{sameevr}
@@ -628,9 +629,10 @@ cmake .  -DBUILD_CONFIG=mysql_release \
          -DWITH_READLINE=ON \
          -DWITH_SSL=system \
          -DWITH_ZLIB=system \
+         -DWITH_JEMALLOC=auto \
 %{?with_pcre: -DWITH_PCRE=system}\
 %{!?with_tokudb: -DWITHOUT_TOKUDB=ON\ 
-        -DWITH_JEMALLOC=no}\
+         -DWITH_JEMALLOC=no}\
          -DTMPDIR=/var/tmp \
          %{?_hardened_build:-DWITH_MYSQLD_LDFLAGS="-pie -Wl,-z,relro,-z,now"}
 
@@ -677,8 +679,8 @@ install -p -m 0755 scripts/mysql_config_multilib %{buildroot}%{_bindir}/mysql_co
 
 # install INFO_SRC, INFO_BIN into libdir (upstream thinks these are doc files,
 # but that's pretty wacko --- see also %%{name}-file-contents.patch)
-mv %{buildroot}%{_pkgdocdir}/MariaDB-server-%{version}/INFO_SRC %{buildroot}%{_libdir}/mysql/
-mv %{buildroot}%{_pkgdocdir}/MariaDB-server-%{version}/INFO_BIN %{buildroot}%{_libdir}/mysql/
+install -p -m 644 Docs/INFO_SRC %{buildroot}%{_libdir}/mysql/
+install -p -m 644 Docs/INFO_BIN %{buildroot}%{_libdir}/mysql/
 rm -rf %{buildroot}%{_pkgdocdir}/MariaDB-server-%{version}/
 
 mkdir -p %{buildroot}%{logfiledir}
@@ -1186,10 +1188,16 @@ fi
 %endif
 
 %changelog
-* Tue Sep 16 2014 Ben Harper <ben.harper@rackspace.com> - 10.0.13-4.ius
+* Mon Oct 06 2014 Ben Harper <ben.harper@rackspace.com> - 1:10.0.14-1.ius
+- Latest upstream
+- add buildrequires for jemalloc-devel and -DWITH_JEMALLOC=auto
+- change how INFO_SRC INFO_BIN get installed
+- update to use %{epoch}
+
+* Tue Sep 16 2014 Ben Harper <ben.harper@rackspace.com> - 1:10.0.13-4.ius
 - more tweaks to Conflicts
 
-* Mon Sep 15 2014 Ben Harper <ben.harper@rackspace.com> - 10.0.13-3
+* Mon Sep 15 2014 Ben Harper <ben.harper@rackspace.com> - 1:10.0.13-3
 - readding epoch as conflicts were not working correctly
 
 * Thu Sep 04 2014 Ben Harper <ben.harper@rackspace.com> - 10.0.13-2
