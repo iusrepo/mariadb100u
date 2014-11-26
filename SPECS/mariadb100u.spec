@@ -101,7 +101,7 @@
 # Make long macros shorter
 %global sameevr   %{epoch}:%{version}-%{release}
 %global compatver 10.0
-%global bugfixver 14
+%global bugfixver 15
 
 Name:             %{real_name}%{?ius_suffix}
 Version:          %{compatver}.%{bugfixver}
@@ -1188,6 +1188,9 @@ fi
 %endif
 
 %changelog
+* Wed Nov 26 2014 Carl George <carl.george@rackspace.com> - 1:10.0.15-1.ius
+- Latest upstream
+
 * Mon Oct 06 2014 Ben Harper <ben.harper@rackspace.com> - 1:10.0.14-1.ius
 - Latest upstream
 - add buildrequires for jemalloc-devel and -DWITH_JEMALLOC=auto

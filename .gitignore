@@ -1,4 +1,5 @@
 SRPMS/*
+SOURCES/*.tar.gz
 BUILD/*
 RPMS/*
 BUILDROOT/*
