@@ -115,7 +115,10 @@ URL:              http://mariadb.org
 # not only GPL code.  See README.mysql-license
 License:          GPLv2 with exceptions and LGPLv2 and BSD
 
-Source0:          http://rsync.osuosl.org/pub/mariadb/mariadb-%{version}/source/mariadb-%{version}.tar.gz
+# For some reason, spectools has issues downloading the source tarball correctly.
+# Just manually download it from the master mirror.
+# http://rsync.osuosl.org/pub/mariadb/mariadb-%{version}/source/mariadb-%{version}.tar.gz
+Source0:          mariadb-%{version}.tar.gz
 Source2:          mysql_config_multilib.sh
 Source3:          my.cnf.in
 Source4:          my_config.h
