@@ -1122,6 +1122,8 @@ fi
 %{_datadir}/%{real_name}/errmsg-utf8.txt
 %{_datadir}/%{real_name}/fill_help_tables.sql
 %{_datadir}/%{real_name}/install_spider.sql
+%{_datadir}/%{real_name}/mroonga/install.sql
+%{_datadir}/%{real_name}/mroonga/uninstall.sql
 %{_datadir}/%{real_name}/mysql_system_tables.sql
 %{_datadir}/%{real_name}/mysql_system_tables_data.sql
 %{_datadir}/%{real_name}/mysql_test_data_timezone.sql
@@ -1194,6 +1196,7 @@ fi
 * Wed Nov 26 2014 Carl George <carl.george@rackspace.com> - 1:10.0.15-1.ius
 - Latest upstream
 - Refresh patch5
+- Include new files mroonga/install.sql and mroonga/uninstall.sql
 
 * Mon Oct 06 2014 Ben Harper <ben.harper@rackspace.com> - 1:10.0.14-1.ius
 - Latest upstream
