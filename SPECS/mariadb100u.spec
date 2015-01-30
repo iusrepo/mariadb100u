@@ -862,7 +862,7 @@ export MTR_BUILD_THREAD=%{__isa_bits}
 # increase timeouts to prevent unwanted failures during mass rebuilds
 (
   cd mysql-test
-  perl ./mysql-test-run.pl --force --retry=0 --ssl \
+  perl ./mysql-test-run.pl --force --retry=0 \
     --skip-test-list=rh-skipped-tests.list \
     --suite-timeout=720 --testcase-timeout=30 \
     --mysqld=--binlog-format=mixed --force-restart \
@@ -1195,6 +1195,7 @@ fi
 %changelog
 * Wed Jan 28 2015 Ben Harper <ben.harper@rackspace.com> - 1:10.0.16-i.ius
 - Latest upstream
+- remove --ssl for mysql-test
 
 * Wed Nov 26 2014 Carl George <carl.george@rackspace.com> - 1:10.0.15-1.ius
 - Latest upstream
