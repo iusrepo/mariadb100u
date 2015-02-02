@@ -1,0 +1,9 @@
+# even without --ssl removed from mysql-test-run.pl, these test fail.
+rpl.rpl_heartbeat_ssl
+rpl.rpl_ssl
+rpl.rpl_ssl1
+main.ssl_cipher
+main.ssl
+main.ssl_8k_key
+main.ssl_compress
+main.ssl_connect

@@ -141,6 +141,9 @@ Source52:         rh-skipped-tests-arm.list
 Source53:         rh-skipped-tests-ppc-s390.list
 Source54:         rh-skipped-tests-ppc64le.list
 
+
+Source100:         ius-skipped-tests-ssl.list
+
 # Comments for these patches are in the patch files
 # Patches common for more mysql-like packages
 Patch1:           %{pkgnamepatch}-strmov.patch
@@ -160,6 +163,7 @@ Patch33:          %{pkgnamepatch}-covscan-signexpr.patch
 Patch34:          %{pkgnamepatch}-covscan-stroverflow.patch
 Patch35:          %{pkgnamepatch}-config.patch
 Patch36:          %{pkgnamepatch}-ssltest.patch
+
 
 BuildRequires:    cmake
 BuildRequires:    libaio-devel
@@ -548,6 +552,8 @@ cat %{SOURCE53} >> mysql-test/rh-skipped-tests.list
 %ifarch ppc64le
 cat %{SOURCE54} >> mysql-test/rh-skipped-tests.list
 %endif
+
+cat %{SOURCE100} >> mysql-test/rh-skipped-tests.list
 
 cp %{SOURCE2} %{SOURCE3} %{SOURCE10} %{SOURCE11} %{SOURCE12} %{SOURCE13} \
    %{SOURCE14} %{SOURCE15} %{SOURCE16} %{SOURCE17} %{SOURCE18} scripts
@@ -1196,6 +1202,7 @@ fi
 * Wed Jan 28 2015 Ben Harper <ben.harper@rackspace.com> - 1:10.0.16-i.ius
 - Latest upstream
 - remove --ssl for mysql-test
+- add Source100 to disable a few ssl tests
 
 * Wed Nov 26 2014 Carl George <carl.george@rackspace.com> - 1:10.0.15-1.ius
 - Latest upstream
