@@ -141,8 +141,17 @@ Source52:         rh-skipped-tests-arm.list
 Source53:         rh-skipped-tests-ppc-s390.list
 Source54:         rh-skipped-tests-ppc64le.list
 
+#Source tar ball included expired CA certificate.  These certificate came from
+# http://bazaar.launchpad.net/~maria-captains/maria/10.0/revision/4593#mysql-test/r/mysqlcheck.result
+Source100:        cacert.pem
+Source101:        client-cert.pem
+Source102:        client-key.pem
+Source103:        server-cert.pem
+Source104:        server-key.pem
+Source105:        server8k-cert.pem
+Source106:        server8k-key.pem
 
-Source100:         ius-skipped-tests-ssl.list
+
 
 # Comments for these patches are in the patch files
 # Patches common for more mysql-like packages
@@ -164,6 +173,9 @@ Patch34:          %{pkgnamepatch}-covscan-stroverflow.patch
 Patch35:          %{pkgnamepatch}-config.patch
 Patch36:          %{pkgnamepatch}-ssltest.patch
 
+# Patches part of new CA certificate commit
+# http://bazaar.launchpad.net/~maria-captains/maria/10.0/revision/4593#mysql-test/r/mysqlcheck.result
+Patch100:          %{pkgnamepatch}-update-ca.patch
 
 BuildRequires:    cmake
 BuildRequires:    libaio-devel
@@ -527,6 +539,7 @@ MariaDB is a community developed branch of MySQL.
 %patch34 -p1
 %patch35 -p1
 %patch36 -p1
+%patch100 -p1
 
 sed -i -e 's/2.8.7/2.6.4/g' cmake/cpack_rpm.cmake
 
@@ -553,10 +566,11 @@ cat %{SOURCE53} >> mysql-test/rh-skipped-tests.list
 cat %{SOURCE54} >> mysql-test/rh-skipped-tests.list
 %endif
 
-cat %{SOURCE100} >> mysql-test/rh-skipped-tests.list
-
 cp %{SOURCE2} %{SOURCE3} %{SOURCE10} %{SOURCE11} %{SOURCE12} %{SOURCE13} \
    %{SOURCE14} %{SOURCE15} %{SOURCE16} %{SOURCE17} %{SOURCE18} scripts
+
+cp %{SOURCE100} %{SOURCE101} %{SOURCE102} %{SOURCE103} %{SOURCE104} %{SOURCE105} \
+   %{SOURCE106} mysql-test/std_data
 
 %build
 
@@ -868,7 +882,7 @@ export MTR_BUILD_THREAD=%{__isa_bits}
 # increase timeouts to prevent unwanted failures during mass rebuilds
 (
   cd mysql-test
-  perl ./mysql-test-run.pl --force --retry=0 \
+  perl ./mysql-test-run.pl --force --retry=0 --ssl \
     --skip-test-list=rh-skipped-tests.list \
     --suite-timeout=720 --testcase-timeout=30 \
     --mysqld=--binlog-format=mixed --force-restart \
@@ -1199,10 +1213,9 @@ fi
 %endif
 
 %changelog
-* Wed Jan 28 2015 Ben Harper <ben.harper@rackspace.com> - 1:10.0.16-i.ius
+* Wed Jan 28 2015 Ben Harper <ben.harper@rackspace.com> - 1:10.0.16-1.ius
 - Latest upstream
-- remove --ssl for mysql-test
-- add Source100 to disable a few ssl tests
+- add Source100-106 and Patch100 to correct expired CA certificate
 
 * Wed Nov 26 2014 Carl George <carl.george@rackspace.com> - 1:10.0.15-1.ius
 - Latest upstream
