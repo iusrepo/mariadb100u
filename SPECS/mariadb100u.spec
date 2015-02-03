@@ -250,6 +250,7 @@ Requires:         %{name}-common%{?_isa} = %{sameevr}
 Provides:         mysql-libs = %{sameevr}
 Provides:         mysql-libs%{?_isa} = %{sameevr}
 Provides:         %{real_name}-libs = %{sameevr}
+Provides:         config(%{real_name}-libs) = %{sameevr}
 Provides:         %{real_name}-libs%{?_isa} = %{sameevr}
 %if %{without config}
 Provides:         config(%{real_name}-libs) = %{sameevr}
@@ -1216,6 +1217,7 @@ fi
 * Wed Jan 28 2015 Ben Harper <ben.harper@rackspace.com> - 1:10.0.16-1.ius
 - Latest upstream
 - add Source100-106 and Patch100 to correct expired CA certificate
+- add Provides for config(mariadb-libs)
 
 * Wed Nov 26 2014 Carl George <carl.george@rackspace.com> - 1:10.0.15-1.ius
 - Latest upstream
