@@ -101,7 +101,7 @@
 # Make long macros shorter
 %global sameevr   %{epoch}:%{version}-%{release}
 %global compatver 10.0
-%global bugfixver 16
+%global bugfixver 17
 
 Name:             %{real_name}%{?ius_suffix}
 Version:          %{compatver}.%{bugfixver}
@@ -141,18 +141,6 @@ Source52:         rh-skipped-tests-arm.list
 Source53:         rh-skipped-tests-ppc-s390.list
 Source54:         rh-skipped-tests-ppc64le.list
 
-#Source tar ball included expired CA certificate.  These certificate came from
-# http://bazaar.launchpad.net/~maria-captains/maria/10.0/revision/4593#mysql-test/r/mysqlcheck.result
-Source100:        cacert.pem
-Source101:        client-cert.pem
-Source102:        client-key.pem
-Source103:        server-cert.pem
-Source104:        server-key.pem
-Source105:        server8k-cert.pem
-Source106:        server8k-key.pem
-
-
-
 # Comments for these patches are in the patch files
 # Patches common for more mysql-like packages
 Patch1:           %{pkgnamepatch}-strmov.patch
@@ -172,10 +160,6 @@ Patch33:          %{pkgnamepatch}-covscan-signexpr.patch
 Patch34:          %{pkgnamepatch}-covscan-stroverflow.patch
 Patch35:          %{pkgnamepatch}-config.patch
 Patch36:          %{pkgnamepatch}-ssltest.patch
-
-# Patches part of new CA certificate commit
-# http://bazaar.launchpad.net/~maria-captains/maria/10.0/revision/4593#mysql-test/r/mysqlcheck.result
-Patch100:          %{pkgnamepatch}-update-ca.patch
 
 BuildRequires:    cmake
 BuildRequires:    libaio-devel
@@ -540,7 +524,6 @@ MariaDB is a community developed branch of MySQL.
 %patch34 -p1
 %patch35 -p1
 %patch36 -p1
-%patch100 -p1
 
 sed -i -e 's/2.8.7/2.6.4/g' cmake/cpack_rpm.cmake
 
@@ -1214,6 +1197,10 @@ fi
 %endif
 
 %changelog
+* Mon Mar 02 2015 Ben Harper <ben.harper@rackspace.com> - 1:10.0.17-1.ius
+- Latest upstream
+- remove Source100-106 and Patch100, patched upstream
+
 * Wed Jan 28 2015 Ben Harper <ben.harper@rackspace.com> - 1:10.0.16-1.ius
 - Latest upstream
 - add Source100-106 and Patch100 to correct expired CA certificate
