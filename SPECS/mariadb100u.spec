@@ -553,9 +553,6 @@ cat %{SOURCE54} >> mysql-test/rh-skipped-tests.list
 cp %{SOURCE2} %{SOURCE3} %{SOURCE10} %{SOURCE11} %{SOURCE12} %{SOURCE13} \
    %{SOURCE14} %{SOURCE15} %{SOURCE16} %{SOURCE17} %{SOURCE18} scripts
 
-cp %{SOURCE100} %{SOURCE101} %{SOURCE102} %{SOURCE103} %{SOURCE104} %{SOURCE105} \
-   %{SOURCE106} mysql-test/std_data
-
 %build
 
 # fail quickly and obviously if user tries to build as root
