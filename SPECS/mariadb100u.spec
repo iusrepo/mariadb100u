@@ -101,7 +101,7 @@
 # Make long macros shorter
 %global sameevr   %{epoch}:%{version}-%{release}
 %global compatver 10.0
-%global bugfixver 17
+%global bugfixver 19
 
 Name:             %{real_name}%{?ius_suffix}
 Version:          %{compatver}.%{bugfixver}
@@ -140,6 +140,8 @@ Source51:         rh-skipped-tests-intel.list
 Source52:         rh-skipped-tests-arm.list
 Source53:         rh-skipped-tests-ppc-s390.list
 Source54:         rh-skipped-tests-ppc64le.list
+
+Source107: ius-skipped-tests.list
 
 # Comments for these patches are in the patch files
 # Patches common for more mysql-like packages
@@ -513,9 +515,9 @@ MariaDB is a community developed branch of MySQL.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5 -p1
+#%patch5 -p1
 %patch6 -p1
-%patch7 -p1
+#%patch7 -p1
 %patch8 -p1
 %patch30 -p1
 %patch31 -p1
@@ -549,6 +551,8 @@ cat %{SOURCE53} >> mysql-test/rh-skipped-tests.list
 %ifarch ppc64le
 cat %{SOURCE54} >> mysql-test/rh-skipped-tests.list
 %endif
+
+cat %{SOURCE107} >> mysql-test/rh-skipped-tests.list
 
 cp %{SOURCE2} %{SOURCE3} %{SOURCE10} %{SOURCE11} %{SOURCE12} %{SOURCE13} \
    %{SOURCE14} %{SOURCE15} %{SOURCE16} %{SOURCE17} %{SOURCE18} scripts
@@ -1194,6 +1198,12 @@ fi
 %endif
 
 %changelog
+* Wed May 13 2015 Ben Harper <ben.harper@rackspace.com> - 1:10.0.19-1.ius
+- Latest upstream
+- add Source107
+- disable Patch5 and Patch7
+- update Patch36 to match Fedora, http://pkgs.fedoraproject.org/cgit/mariadb.git/tree/mariadb-ssltest.patch?id=965e4581ba120efdfe2bfcb9846b1e9c89bd2424
+
 * Mon Mar 02 2015 Ben Harper <ben.harper@rackspace.com> - 1:10.0.17-1.ius
 - Latest upstream
 - remove Source100-106 and Patch100, patched upstream
