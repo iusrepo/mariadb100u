@@ -101,7 +101,7 @@
 # Make long macros shorter
 %global sameevr   %{epoch}:%{version}-%{release}
 %global compatver 10.0
-%global bugfixver 19
+%global bugfixver 20
 
 Name:             %{real_name}%{?ius_suffix}
 Version:          %{compatver}.%{bugfixver}
@@ -115,10 +115,7 @@ URL:              http://mariadb.org
 # not only GPL code.  See README.mysql-license
 License:          GPLv2 with exceptions and LGPLv2 and BSD
 
-# For some reason, spectools has issues downloading the source tarball correctly.
-# Just manually download it from the master mirror.
-# http://rsync.osuosl.org/pub/mariadb/mariadb-%{version}/source/mariadb-%{version}.tar.gz
-Source0:          mariadb-%{version}.tar.gz
+Source0:          http://ftp.utexas.edu/mariadb/mariadb-%{version}/source/mariadb-%{version}.tar.gz
 Source2:          mysql_config_multilib.sh
 Source3:          my.cnf.in
 Source4:          my_config.h
@@ -1198,6 +1195,9 @@ fi
 %endif
 
 %changelog
+* Fri Jun 19 2015 Carl George <carl.george@rackspace.com> - 1:10.0.20-1.ius
+- Latest upstream
+
 * Wed May 13 2015 Ben Harper <ben.harper@rackspace.com> - 1:10.0.19-1.ius
 - Latest upstream
 - add Source107
