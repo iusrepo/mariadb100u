@@ -1197,6 +1197,7 @@ fi
 %changelog
 * Fri Jun 19 2015 Carl George <carl.george@rackspace.com> - 1:10.0.20-1.ius
 - Latest upstream
+- Add ssl_7937 test to skip list
 
 * Wed May 13 2015 Ben Harper <ben.harper@rackspace.com> - 1:10.0.19-1.ius
 - Latest upstream
