@@ -810,7 +810,7 @@ rm -f %{buildroot}%{_mandir}/man1/mysql_config.1*
 
 %if %{without client}
 rm -f %{buildroot}%{_bindir}/{msql2mysql,mysql,mysql_find_rows,mysql_waitpid,\
-mysqlaccess,mysqladmin,mysqlbinlog,mysqlcheck,mysqldump,tokuftdump,mysqlimport,\
+mysqlaccess,mysqladmin,mysqlbinlog,mysqlcheck,mysqldump,tokuftdump,tokuft_logprint,mysqlimport,\
 mysqlshow,mysqlslap,my_print_defaults,aria_chk,aria_dump_log,aria_ftdump,\
 aria_pack,aria_read_log}
 rm -f %{buildroot}%{_mandir}/man1/{mysql,mysql_find_rows,mysql_waitpid,\
@@ -968,6 +968,7 @@ fi
 %{_bindir}/mysqlcheck
 %{_bindir}/mysqldump
 %{?with_tokudb:%{_bindir}/tokuftdump}
+%{?with_tokudb:%{_bindir}/tokuft_logprint}
 %{_bindir}/mysqlimport
 %{_bindir}/mysqlshow
 %{_bindir}/mysqlslap
