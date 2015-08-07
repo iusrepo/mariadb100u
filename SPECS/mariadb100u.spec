@@ -101,7 +101,7 @@
 # Make long macros shorter
 %global sameevr   %{epoch}:%{version}-%{release}
 %global compatver 10.0
-%global bugfixver 20
+%global bugfixver 21
 
 Name:             %{real_name}%{?ius_suffix}
 Version:          %{compatver}.%{bugfixver}
@@ -1196,6 +1196,10 @@ fi
 %endif
 
 %changelog
+* Fri Aug 07 2015 Ben Harper <ben.harper@rackspace.com> - 1:10.0.21-1.ius
+- Latest upstream
+- Update Patch34
+
 * Fri Jun 19 2015 Carl George <carl.george@rackspace.com> - 1:10.0.20-1.ius
 - Latest upstream
 - Add ssl_7937 test to skip list

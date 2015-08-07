@@ -42,15 +42,3 @@ diff -up mariadb-10.0.10/plugin/semisync/semisync_master.cc.p12 mariadb-10.0.10/
 
 mysql-5.5.31/sql/rpl_handler.cc:306:fixed_size_dest – You might overrun the 512 byte fixed-size string "log_info->log_file" by copying "log_file + dirname_length(log_file)" without checking the length. diff -up mysql-5.5.31/sql/rpl_handler.cc.covscan-stroverflow mysql-5.5.31/sql/rpl_handler.cc
 
---- mariadb-10.0.10/sql/rpl_handler.cc.p12	2014-03-30 19:56:34.000000000 +0200
-+++ mariadb-10.0.10/sql/rpl_handler.cc	2014-04-07 20:07:58.851123497 +0200
-@@ -303,7 +303,8 @@ int Binlog_storage_delegate::after_flush
-     my_pthread_setspecific_ptr(RPL_TRANS_BINLOG_INFO, log_info);
-   }
-     
--  strcpy(log_info->log_file, log_file+dirname_length(log_file));
-+  strncpy(log_info->log_file, log_file+dirname_length(log_file), sizeof(log_info->log_file)-1);
-+  log_info->log_file[sizeof(log_info->log_file)-1] = '\0';
-   log_info->log_pos = log_pos;
-   
-   int ret= 0;
