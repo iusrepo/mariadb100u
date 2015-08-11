@@ -42,3 +42,15 @@ diff -up mariadb-10.0.10/plugin/semisync/semisync_master.cc.p12 mariadb-10.0.10/
 
 mysql-5.5.31/sql/rpl_handler.cc:306:fixed_size_dest – You might overrun the 512 byte fixed-size string "log_info->log_file" by copying "log_file + dirname_length(log_file)" without checking the length. diff -up mysql-5.5.31/sql/rpl_handler.cc.covscan-stroverflow mysql-5.5.31/sql/rpl_handler.cc
 
+--- mariadb-10.0.21/sql/rpl_handler.cc	2015-08-05 18:11:31.000000000 +0000
++++ mariadb-10.0.21/sql/rpl_handler.cc.patch	2015-08-10 22:33:32.694000000 +0000
+@@ -261,7 +261,8 @@
+     thd->semisync_info= log_info;
+   }
+ 
+-  strcpy(log_info->log_file, log_file+dirname_length(log_file));
++  strncpy(log_info->log_file, log_file+dirname_length(log_file), sizeof(log_info->log_file)-1);
++  log_info->log_file[sizeof(log_info->log_file)-1] = '\0';
+   log_info->log_pos = log_pos;
+   
+   FOREACH_OBSERVER(ret, after_flush, false,

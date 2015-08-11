@@ -105,7 +105,7 @@
 
 Name:             %{real_name}%{?ius_suffix}
 Version:          %{compatver}.%{bugfixver}
-Release:          1.ius%{?dist}
+Release:          2.ius%{?dist}
 Epoch:            1
 
 Summary:          A community developed branch of MySQL
@@ -1196,6 +1196,9 @@ fi
 %endif
 
 %changelog
+* Tue Aug 11 2015 Ben Harper <ben.harper@rackspace.com> - 1:10.0.21-2.ius
+- Update Patch34
+
 * Fri Aug 07 2015 Ben Harper <ben.harper@rackspace.com> - 1:10.0.21-1.ius
 - Latest upstream
 - Update Patch34
