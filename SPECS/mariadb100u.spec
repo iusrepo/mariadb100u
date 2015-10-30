@@ -101,11 +101,11 @@
 # Make long macros shorter
 %global sameevr   %{epoch}:%{version}-%{release}
 %global compatver 10.0
-%global bugfixver 21
+%global bugfixver 22
 
 Name:             %{real_name}%{?ius_suffix}
 Version:          %{compatver}.%{bugfixver}
-Release:          2.ius%{?dist}
+Release:          1.ius%{?dist}
 Epoch:            1
 
 Summary:          A community developed branch of MySQL
@@ -1196,6 +1196,9 @@ fi
 %endif
 
 %changelog
+* Fri Oct 30 2015 Ben Harper <ben.harper@rackspace.com> - 1:10.0.22-1.ius
+- Latest upstream
+
 * Tue Aug 11 2015 Ben Harper <ben.harper@rackspace.com> - 1:10.0.21-2.ius
 - Update Patch34
 
