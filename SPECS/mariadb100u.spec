@@ -101,7 +101,7 @@
 # Make long macros shorter
 %global sameevr   %{epoch}:%{version}-%{release}
 %global compatver 10.0
-%global bugfixver 22
+%global bugfixver 23
 
 Name:             %{real_name}%{?ius_suffix}
 Version:          %{compatver}.%{bugfixver}
@@ -519,7 +519,7 @@ MariaDB is a community developed branch of MySQL.
 %patch30 -p1
 %patch31 -p1
 %patch32 -p1
-%patch33 -p1
+#%patch33 -p1
 %patch34 -p1
 %patch35 -p1
 %patch36 -p1
@@ -1196,6 +1196,9 @@ fi
 %endif
 
 %changelog
+* Tue Dec 22 2015 Ben Harper <ben.harper@rackspace.com> - 1:10.0.23-1.ius
+- Latest upstream
+
 * Fri Oct 30 2015 Ben Harper <ben.harper@rackspace.com> - 1:10.0.22-1.ius
 - Latest upstream
 
