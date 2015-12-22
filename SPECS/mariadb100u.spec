@@ -1198,6 +1198,7 @@ fi
 %changelog
 * Tue Dec 22 2015 Ben Harper <ben.harper@rackspace.com> - 1:10.0.23-1.ius
 - Latest upstream
+- disable Patch33
 
 * Fri Oct 30 2015 Ben Harper <ben.harper@rackspace.com> - 1:10.0.22-1.ius
 - Latest upstream
