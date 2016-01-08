@@ -98,6 +98,9 @@
 %global mysqld_enabled_flag_file %{_localstatedir}/lib/rpm-state/mysqld_enabled
 %global mysqld_running_flag_file %{_localstatedir}/lib/rpm-state/mysqld_running
 
+%bcond_without mysql_names
+%bcond_with mysql-server_name
+
 # Make long macros shorter
 %global sameevr   %{epoch}:%{version}-%{release}
 %global compatver 10.0
@@ -105,7 +108,7 @@
 
 Name:             %{real_name}%{?ius_suffix}
 Version:          %{compatver}.%{bugfixver}
-Release:          1.ius%{?dist}
+Release:          2.ius%{?dist}
 Epoch:            1
 
 Summary:          A community developed branch of MySQL
@@ -193,12 +196,15 @@ Requires:         fileutils
 Requires:         grep
 Requires:         %{name}-common%{?_isa} = %{sameevr}
 
+%if %{with mysql_names}
 Provides:         mysql = %{sameevr}
 Provides:         mysql%{?_isa} = %{sameevr}
-Provides:         %{real_name} = %{sameevr}
-Provides:         %{real_name}%{?_isa} = %{sameevr}
 Provides:         mysql-compat-client = %{sameevr}
 Provides:         mysql-compat-client%{?_isa} = %{sameevr}
+%endif
+
+Provides:         %{real_name} = %{sameevr}
+Provides:         %{real_name}%{?_isa} = %{sameevr}
 
 
 # MySQL (with caps) is upstream's spelling of their own RPMs for mysql
@@ -230,8 +236,10 @@ contains the standard MariaDB/MySQL client programs and generic MySQL files.
 Summary:          The shared libraries required for MariaDB/MySQL clients
 Group:            Applications/Databases
 Requires:         %{name}-common%{?_isa} = %{sameevr}
+%if %{with mysql_names}
 Provides:         mysql-libs = %{sameevr}
 Provides:         mysql-libs%{?_isa} = %{sameevr}
+%endif
 Provides:         %{real_name}-libs = %{sameevr}
 Provides:         config(%{real_name}-libs) = %{sameevr}
 Provides:         %{real_name}-libs%{?_isa} = %{sameevr}
@@ -334,13 +342,17 @@ Requires(posttrans): systemd
 # mysqlhotcopy needs DBI/DBD support
 Requires:         perl(DBI)
 Requires:         perl(DBD::mysql)
+%if %{with mysql-server_name}
 Provides:         mysql-server = %{sameevr}
 Provides:         mysql-server%{?_isa} = %{sameevr}
+%endif
+%if %{with mysql_names}
+Provides:         mysql-compat-server = %{sameevr}
+Provides:         mysql-compat-server%{?_isa} = %{sameevr}
+%endif
 Provides:         %{real_name}-server = %{sameevr}
 Provides:         %{real_name}-server%{?_isa} = %{sameevr}
 Provides:         config(%{real_name}-server) = %{sameevr}
-Provides:         mysql-compat-server = %{sameevr}
-Provides:         mysql-compat-server%{?_isa} = %{sameevr}
 Conflicts:        MySQL-server
 Conflicts:        community-mysql-server
 Conflicts:        mysql-server < %{basever}
@@ -382,8 +394,10 @@ Summary:          Files for development of MariaDB/MySQL applications
 Group:            Applications/Databases
 Requires:         %{name}-libs%{?_isa} = %{sameevr}
 Requires:         openssl-devel%{?_isa}
+%if %{with mysql_names}
 Provides:         mysql-devel = %{sameevr}
 Provides:         mysql-devel%{?_isa} = %{sameevr}
+%endif
 Provides:         %{real_name}-devel = %{sameevr}
 Provides:         %{real_name}-devel%{?_isa} = %{sameevr}
 Conflicts:        MySQL-devel
@@ -406,8 +420,10 @@ Summary:          MariaDB as an embeddable library
 Group:            Applications/Databases
 Requires:         %{name}-common%{?_isa} = %{sameevr}
 Requires:         %{name}-errmsg%{?_isa} = %{sameevr}
+%if %{with mysql_names}
 Provides:         mysql-embedded = %{sameevr}
 Provides:         mysql-embedded%{?_isa} = %{sameevr}
+%endif
 Provides:         %{real_name}-embedded = %{sameevr}
 Provides:         %{real_name}-embedded%{?_isa} = %{sameevr}
 Conflicts:        MySQL-embedded
@@ -427,8 +443,10 @@ Summary:          Development files for MariaDB as an embeddable library
 Group:            Applications/Databases
 Requires:         %{name}-embedded%{?_isa} = %{sameevr}
 Requires:         %{name}-devel%{?_isa} = %{sameevr}
+%if %{with mysql_names}
 Provides:         mysql-embedded-devel = %{sameevr}
 Provides:         mysql-embedded-devel%{?_isa} = %{sameevr}
+%endif
 Provides:         %{real_name}-embedded-devel = %{sameevr}
 Provides:         %{real_name}-embedded-devel%{?_isa} = %{sameevr}
 Conflicts:        MySQL-embedded-devel
@@ -450,8 +468,10 @@ MariaDB is a community developed branch of MySQL.
 Summary:          MariaDB benchmark scripts and data
 Group:            Applications/Databases
 Requires:         %{name}%{?_isa} = %{sameevr}
+%if %{with mysql_names}
 Provides:         mysql-bench = %{sameevr}
 Provides:         mysql-bench%{?_isa} = %{sameevr}
+%endif
 Provides:         %{real_name}-bench = %{sameevr}
 Provides:         %{real_name}-bench%{?_isa} = %{sameevr}
 Conflicts:        MySQL-bench
@@ -488,8 +508,10 @@ Requires:         perl(Sys::Hostname)
 Requires:         perl(Test::More)
 Requires:         perl(Time::HiRes)
 Conflicts:        community-mysql-test
+%if %{with mysql_names}
 Provides:         mysql-test = %{sameevr}
 Provides:         mysql-test%{?_isa} = %{sameevr}
+%endif
 Provides:         %{real_name}-test = %{sameevr}
 Provides:         %{real_name}-test%{?_isa} = %{sameevr}
 Conflicts:        community-mysql-test
@@ -1196,6 +1218,9 @@ fi
 %endif
 
 %changelog
+* Fri Jan 08 2016 Ben Harper <ben.harper@rackspace.com> - 1:10.0.23-2.ius
+- provide mysql-compat-server and not mysql-server, see GH#2
+
 * Tue Dec 22 2015 Ben Harper <ben.harper@rackspace.com> - 1:10.0.23-1.ius
 - Latest upstream
 - disable Patch33
