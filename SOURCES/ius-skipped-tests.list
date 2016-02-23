@@ -2,3 +2,4 @@ main.ssl_timeout :test fail starting in 10.0.19
 main.ssl_8k_key  :test fail starting in 10.0.19
 rpl.show_status_stop_slave_race-7126 :test fail starting in 10.0.19
 main.ssl_7937    :test fail starting in 10.0.20
+main.ssl_cert_verify :test fail starting in 10.0.24

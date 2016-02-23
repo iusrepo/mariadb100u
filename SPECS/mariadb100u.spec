@@ -1220,6 +1220,7 @@ fi
 %changelog
 * Tue Feb 23 2016 Carl George <carl.george@rackspace.com> - 1:10.0.24-1.ius
 - Latest upstream
+- Add main.ssl_cert_verify test to skip list
 
 * Fri Jan 08 2016 Ben Harper <ben.harper@rackspace.com> - 1:10.0.23-2.ius
 - provide mysql-compat-server and not mysql-server, see GH#2
