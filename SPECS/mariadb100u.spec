@@ -104,11 +104,11 @@
 # Make long macros shorter
 %global sameevr   %{epoch}:%{version}-%{release}
 %global compatver 10.0
-%global bugfixver 23
+%global bugfixver 24
 
 Name:             %{real_name}%{?ius_suffix}
 Version:          %{compatver}.%{bugfixver}
-Release:          2.ius%{?dist}
+Release:          1.ius%{?dist}
 Epoch:            1
 
 Summary:          A community developed branch of MySQL
@@ -1218,6 +1218,9 @@ fi
 %endif
 
 %changelog
+* Tue Feb 23 2016 Carl George <carl.george@rackspace.com> - 1:10.0.24-1.ius
+- Latest upstream
+
 * Fri Jan 08 2016 Ben Harper <ben.harper@rackspace.com> - 1:10.0.23-2.ius
 - provide mysql-compat-server and not mysql-server, see GH#2
 
