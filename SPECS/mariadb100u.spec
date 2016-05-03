@@ -104,7 +104,7 @@
 # Make long macros shorter
 %global sameevr   %{epoch}:%{version}-%{release}
 %global compatver 10.0
-%global bugfixver 24
+%global bugfixver 25
 
 Name:             %{real_name}%{?ius_suffix}
 Version:          %{compatver}.%{bugfixver}
@@ -544,7 +544,7 @@ MariaDB is a community developed branch of MySQL.
 #%patch33 -p1
 %patch34 -p1
 %patch35 -p1
-%patch36 -p1
+#%patch36 -p1
 
 sed -i -e 's/2.8.7/2.6.4/g' cmake/cpack_rpm.cmake
 
@@ -1218,6 +1218,11 @@ fi
 %endif
 
 %changelog
+* Mon May 02 2016 Ben Harper <ben.harper@rackspace.com> - 1:10.0.25-1.ius
+- Latest upstream
+- update Patch2
+- disable Patch36, appears to be no longer needed
+
 * Tue Feb 23 2016 Carl George <carl.george@rackspace.com> - 1:10.0.24-1.ius
 - Latest upstream
 - Add main.ssl_cert_verify test to skip list
