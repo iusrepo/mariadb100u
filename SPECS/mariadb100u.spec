@@ -1220,6 +1220,7 @@ fi
 %changelog
 * Mon Jun 27 2016 Ben Harper <ben.harper@rackspace.com> - 1:10.0.26-1.ius
 - Latest upstream
+- update Source107 to skip main.multi_update
 - update Source12
   from http://pkgs.fedoraproject.org/cgit/rpms/mariadb.git/commit/?id=cb04c7ab875698414cfd3be4040e52630380eb95
 
