@@ -104,7 +104,7 @@
 # Make long macros shorter
 %global sameevr   %{epoch}:%{version}-%{release}
 %global compatver 10.0
-%global bugfixver 25
+%global bugfixver 26
 
 Name:             %{real_name}%{?ius_suffix}
 Version:          %{compatver}.%{bugfixver}
@@ -1218,6 +1218,11 @@ fi
 %endif
 
 %changelog
+* Mon Jun 27 2016 Ben Harper <ben.harper@rackspace.com> - 1:10.0.26-1.ius
+- Latest upstream
+- update Source12
+  from http://pkgs.fedoraproject.org/cgit/rpms/mariadb.git/commit/?id=cb04c7ab875698414cfd3be4040e52630380eb95
+
 * Mon May 02 2016 Ben Harper <ben.harper@rackspace.com> - 1:10.0.25-1.ius
 - Latest upstream
 - update Patch2
