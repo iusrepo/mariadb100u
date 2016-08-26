@@ -104,7 +104,7 @@
 # Make long macros shorter
 %global sameevr   %{epoch}:%{version}-%{release}
 %global compatver 10.0
-%global bugfixver 26
+%global bugfixver 27
 
 Name:             %{real_name}%{?ius_suffix}
 Version:          %{compatver}.%{bugfixver}
@@ -1218,6 +1218,9 @@ fi
 %endif
 
 %changelog
+* Thu Aug 25 2016 Ben Harper <ben.harper@rackspace.com> - 1:10.0.27-1.ius
+- Latest upstream
+
 * Mon Jun 27 2016 Ben Harper <ben.harper@rackspace.com> - 1:10.0.26-1.ius
 - Latest upstream
 - update Source107 to skip main.multi_update
