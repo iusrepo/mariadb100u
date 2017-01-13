@@ -104,7 +104,7 @@
 # Make long macros shorter
 %global sameevr   %{epoch}:%{version}-%{release}
 %global compatver 10.0
-%global bugfixver 28
+%global bugfixver 29
 
 Name:             %{real_name}%{?ius_suffix}
 Version:          %{compatver}.%{bugfixver}
@@ -708,7 +708,7 @@ install -p -m 0755 scripts/mysql_config_multilib %{buildroot}%{_bindir}/mysql_co
 # but that's pretty wacko --- see also %%{name}-file-contents.patch)
 install -p -m 644 Docs/INFO_SRC %{buildroot}%{_libdir}/mysql/
 install -p -m 644 Docs/INFO_BIN %{buildroot}%{_libdir}/mysql/
-rm -rf %{buildroot}%{_pkgdocdir}/MariaDB-server-%{version}/
+rm -rf %{buildroot}%{_docdir}/%{name}-%{version}/MariaDB-server-%{version}/
 
 mkdir -p %{buildroot}%{logfiledir}
 chmod 0750 %{buildroot}%{logfiledir}
@@ -1091,6 +1091,7 @@ fi
 %{_bindir}/mysqldumpslow
 %{_bindir}/mysqld_multi
 %{_bindir}/mysqld_safe
+%{_bindir}/mysqld_safe_helper
 %{_bindir}/mysqlhotcopy
 %{_bindir}/mysqltest
 %{_bindir}/innochecksum
@@ -1218,6 +1219,11 @@ fi
 %endif
 
 %changelog
+* Fri Jan 13 2017 Ben Harper <ben.harper@rackspace.com> - 1:10.0.29-1.ius
+- Latest upstream
+- add new file, /usr/bin/mysqld_safe_helper
+- tweak to some docs deletion
+
 * Tue Nov 01 2016 Carl George <carl.george@rackspace.com> - 1:10.0.28-1.ius
 - Latest upstream
 
