@@ -14,9 +14,8 @@ Adjust the mysql-log-rotate script in several ways:
 See discussions at RH bugs 799735, 547007
 
 
-diff -up mariadb-10.0.10/support-files/mysql-log-rotate.sh.p5 mariadb-10.0.10/support-files/mysql-log-rotate.sh
---- mariadb-10.0.10/support-files/mysql-log-rotate.sh.p5	2014-03-30 19:56:53.000000000 +0200
-+++ mariadb-10.0.10/support-files/mysql-log-rotate.sh	2014-04-07 16:30:11.264618655 +0200
+--- mariadb-10.0.30/support-files/mysql-log-rotate.sh	2017-03-06 20:04:51.000000000 +0000
++++ mariadb-10.0.30/support-files/mysql-log-rotate.sh.patch	2017-03-09 13:12:44.295795618 +0000
 @@ -1,9 +1,9 @@
  # This logname can be set in /etc/my.cnf
 -# by setting the variable "err-log"
@@ -31,7 +30,7 @@ diff -up mariadb-10.0.10/support-files/mysql-log-rotate.sh.p5 mariadb-10.0.10/su
  #
  # If the root user has a password you have to create a
  # /root/.my.cnf configuration file with the following
-@@ -18,19 +18,21 @@
+@@ -18,20 +18,21 @@
  # ATTENTION: This /root/.my.cnf should be readable ONLY
  # for root !
  
@@ -47,7 +46,8 @@ diff -up mariadb-10.0.10/support-files/mysql-log-rotate.sh.p5 mariadb-10.0.10/su
 -	if test -x @bindir@/mysqladmin && \
 -	   @bindir@/mysqladmin ping &>/dev/null
 -	then
--	   @bindir@/mysqladmin flush-logs
+-	   @bindir@/mysqladmin --local flush-error-log \
+-              flush-engine-log flush-general-log flush-slow-log
 -	fi
 -    endscript
 -}
@@ -65,7 +65,8 @@ diff -up mariadb-10.0.10/support-files/mysql-log-rotate.sh.p5 mariadb-10.0.10/su
 +#	if test -x @bindir@/mysqladmin && \
 +#	   @bindir@/mysqladmin ping &>/dev/null
 +#	then
-+#	   @bindir@/mysqladmin flush-logs
++#	   @bindir@/mysqladmin --local flush-error-log \
++#             flush-engine-log flush-general-log flush-slow-log
 +#	fi
 +#    endscript
 +#}

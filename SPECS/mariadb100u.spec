@@ -104,7 +104,7 @@
 # Make long macros shorter
 %global sameevr   %{epoch}:%{version}-%{release}
 %global compatver 10.0
-%global bugfixver 29
+%global bugfixver 30
 
 Name:             %{real_name}%{?ius_suffix}
 Version:          %{compatver}.%{bugfixver}
@@ -1219,6 +1219,10 @@ fi
 %endif
 
 %changelog
+* Thu Mar 09 2017 Ben Harper <ben.harper@rackspace.com> - 1:10.0.30-1.ius
+- Latest upstream
+- update Patch4
+
 * Fri Jan 13 2017 Ben Harper <ben.harper@rackspace.com> - 1:10.0.29-1.ius
 - Latest upstream
 - add new file, /usr/bin/mysqld_safe_helper
