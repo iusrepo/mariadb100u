@@ -104,7 +104,7 @@
 # Make long macros shorter
 %global sameevr   %{epoch}:%{version}-%{release}
 %global compatver 10.0
-%global bugfixver 30
+%global bugfixver 31
 
 Name:             %{real_name}%{?ius_suffix}
 Version:          %{compatver}.%{bugfixver}
@@ -1219,6 +1219,9 @@ fi
 %endif
 
 %changelog
+* Thu May 25 2017 Carl George <carl.george@rackspace.com> - 1:10.0.31-1.ius
+- Latest upstream
+
 * Thu Mar 09 2017 Ben Harper <ben.harper@rackspace.com> - 1:10.0.30-1.ius
 - Latest upstream
 - update Patch4
