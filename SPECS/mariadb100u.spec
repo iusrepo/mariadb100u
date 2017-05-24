@@ -136,7 +136,6 @@ Patch8:           %{pkgnamepatch}-scripts.patch
 
 # Patches specific for this mysql package
 Patch30:          %{pkgnamepatch}-errno.patch
-Patch31:          %{pkgnamepatch}-string-overflow.patch
 Patch32:          %{pkgnamepatch}-basedir.patch
 Patch33:          %{pkgnamepatch}-covscan-signexpr.patch
 Patch34:          %{pkgnamepatch}-covscan-stroverflow.patch
@@ -532,7 +531,6 @@ MariaDB is a community developed branch of MySQL.
 #%patch7 -p1
 %patch8 -p1
 %patch30 -p1
-%patch31 -p1
 %patch32 -p1
 #%patch33 -p1
 %patch34 -p1
@@ -1215,6 +1213,7 @@ fi
 - Set %%old_logfile macro
 - Clean up provides and conflicts
 - Macro clean up
+- Remove patch31, resolved upstream (MDEV-6262)
 
 * Thu Mar 09 2017 Ben Harper <ben.harper@rackspace.com> - 1:10.0.30-1.ius
 - Latest upstream
