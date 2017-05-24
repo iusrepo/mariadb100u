@@ -78,9 +78,7 @@
 %global logrotateddir %{_sysconfdir}/logrotate.d
 %global logfiledir %{_localstatedir}/log/%{daemon_name}
 %global logfile %{logfiledir}/%{daemon_name}.log
-%if 0%{?fedora} >= 20
 %global old_logfile %{_localstatedir}/log/mysqld.log
-%endif
 
 # Home directory of mysql user should be same for all packages that create it
 %global mysqluserhome /var/lib/mysql
@@ -1207,6 +1205,7 @@ fi
 * Thu May 25 2017 Carl George <carl.george@rackspace.com> - 1:10.0.31-1.ius
 - Latest upstream
 - Remove obsoletes
+- Set %%old_logfile macro
 
 * Thu Mar 09 2017 Ben Harper <ben.harper@rackspace.com> - 1:10.0.30-1.ius
 - Latest upstream
