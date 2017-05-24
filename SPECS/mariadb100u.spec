@@ -85,10 +85,6 @@
 # Home directory of mysql user should be same for all packages that create it
 %global mysqluserhome /var/lib/mysql
 
-# The evr of mysql we want to obsolete
-%global obsoleted_mysql_evr 5.6-0
-%global obsoleted_mysql_case_evr 5.5.30-5
-
 # When replacing mysql by mariadb these packages are not upated, but rather
 # installed and uninstalled. Thus we loose information about mysqld service
 # enablement. To address this we use a file to store that information within
@@ -208,8 +204,6 @@ Provides:         %{real_name}%{?_isa} = %{sameevr}
 
 
 # MySQL (with caps) is upstream's spelling of their own RPMs for mysql
-%{?obsoleted_mysql_case_evr:Obsoletes: MySQL < %{obsoleted_mysql_case_evr}}
-%{?obsoleted_mysql_evr:Obsoletes: mysql < %{obsoleted_mysql_evr}}
 Conflicts:        community-mysql
 Conflicts:        mysql < %{basever}
 
@@ -250,8 +244,7 @@ Conflicts:        MySQL-libs
 Conflicts:        mysql-libs < %{basever}
 Conflicts:        mariadb-libs < %{basever}
 Conflicts:        %{epoch}:mariadb-libs >= 1:5.5
-%{?obsoleted_mysql_case_evr:Obsoletes: MySQL-libs < %{obsoleted_mysql_case_evr}}
-%{?obsoleted_mysql_evr:Obsoletes: mysql-libs < %{obsoleted_mysql_evr}}
+
 
 %description      libs
 The mariadb-libs package provides the essential shared libraries for any
@@ -357,10 +350,9 @@ Conflicts:        MySQL-server
 Conflicts:        community-mysql-server
 Conflicts:        mysql-server < %{basever}
 
-%{?obsoleted_mysql_case_evr:Obsoletes: MySQL-server < %{obsoleted_mysql_case_evr}}
 Conflicts:        community-mysql-server
 Conflicts:        mariadb-galera-server
-%{?obsoleted_mysql_evr:Obsoletes: mysql-server < %{obsoleted_mysql_evr}}
+
 
 %description      server
 MariaDB is a multi-user, multi-threaded SQL database server. It is a
@@ -402,8 +394,6 @@ Provides:         %{real_name}-devel = %{sameevr}
 Provides:         %{real_name}-devel%{?_isa} = %{sameevr}
 Conflicts:        MySQL-devel
 Conflicts:        mysql-devel < %{basever}
-%{?obsoleted_mysql_case_evr:Obsoletes: MySQL-devel < %{obsoleted_mysql_case_evr}}
-%{?obsoleted_mysql_evr:Obsoletes: mysql-devel < %{obsoleted_mysql_evr}}
 Conflicts:        community-mysql-devel
 
 %description      devel
@@ -427,9 +417,7 @@ Provides:         mysql-embedded%{?_isa} = %{sameevr}
 Provides:         %{real_name}-embedded = %{sameevr}
 Provides:         %{real_name}-embedded%{?_isa} = %{sameevr}
 Conflicts:        MySQL-embedded
-Obsoletes:        mysql-embedded < %{basever}
-%{?obsoleted_mysql_case_evr:Obsoletes: MySQL-embedded < %{obsoleted_mysql_case_evr}}
-%{?obsoleted_mysql_evr:Obsoletes: mysql-embedded < %{obsoleted_mysql_evr}}
+
 
 %description      embedded
 MariaDB is a multi-user, multi-threaded SQL database server. This
@@ -452,8 +440,7 @@ Provides:         %{real_name}-embedded-devel%{?_isa} = %{sameevr}
 Conflicts:        MySQL-embedded-devel
 Conflicts:        mysql-embedded-devel < %{basever}
 Conflicts:        community-mysql-embedded-devel
-%{?obsoleted_mysql_case_evr:Obsoletes: MySQL-embedded-devel < %{obsoleted_mysql_case_evr}}
-%{?obsoleted_mysql_evr:Obsoletes: mysql-embedded-devel < %{obsoleted_mysql_evr}}
+
 
 %description      embedded-devel
 MariaDB is a multi-user, multi-threaded SQL database server. This
@@ -478,8 +465,7 @@ Conflicts:        MySQL-bench
 Conflicts:        mysql-bench < %{basever}
 
 Conflicts:        community-mysql-bench
-%{?obsoleted_mysql_case_evr:Obsoletes: MySQL-bench < %{obsoleted_mysql_case_evr}}
-%{?obsoleted_mysql_evr:Obsoletes: mysql-bench < %{obsoleted_mysql_evr}}
+
 
 %description      bench
 MariaDB is a multi-user, multi-threaded SQL database server. This
@@ -517,8 +503,7 @@ Provides:         %{real_name}-test%{?_isa} = %{sameevr}
 Conflicts:        community-mysql-test
 Conflicts:        MySQL-test
 Conflicts:        mysql-test < %{basever}
-%{?obsoleted_mysql_case_evr:Obsoletes: MySQL-test < %{obsoleted_mysql_case_evr}}
-%{?obsoleted_mysql_evr:Obsoletes: mysql-test < %{obsoleted_mysql_evr}}
+
 
 %description      test
 MariaDB is a multi-user, multi-threaded SQL database server. This
@@ -1221,6 +1206,7 @@ fi
 %changelog
 * Thu May 25 2017 Carl George <carl.george@rackspace.com> - 1:10.0.31-1.ius
 - Latest upstream
+- Remove obsoletes
 
 * Thu Mar 09 2017 Ben Harper <ben.harper@rackspace.com> - 1:10.0.30-1.ius
 - Latest upstream
