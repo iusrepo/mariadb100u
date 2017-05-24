@@ -2,7 +2,7 @@
 %global pkg_name     mariadb
 %global pkgnamepatch mariadb
 
-# Regression tests may take a long time (many cores recommended), skip them by 
+# Regression tests may take a long time (many cores recommended), skip them by
 # passing --nocheck to rpmbuild or by setting runselftest to 0 if defining
 # --nocheck is not possible (e.g. in koji build)
 %{!?runselftest:%global runselftest 1}
@@ -20,13 +20,7 @@
 
 # TokuDB engine is now part of MariaDB, but it is available only for x86_64;
 # variable tokudb allows to build with TokuDB storage engine
-# Temporarily disabled in F21+ for https://mariadb.atlassian.net/browse/MDEV-6446
-
-%if 0%{?fedora} < 21 || 0%{?rhel} < 7
-%bcond_without tokudb
-%else
 %bcond_with tokudb
-%endif
 
 # The Open Query GRAPH engine (OQGRAPH) is a computation engine allowing
 # hierarchies and more complex graph structures to be handled in a relational
@@ -53,8 +47,6 @@
 %bcond_without init_systemd
 %bcond_with init_sysv
 %global daemon_name %{pkg_name}
-# Provide temporary service file name that will be removed after some time
-# (Fedora 22?)
 %global mysqld_unit mysqld
 %else
 %bcond_with init_systemd
@@ -204,6 +196,7 @@ Conflicts:        %{pkg_name} < %{sameevr}
 %filter_provides_in -P (%{_datadir}/(mysql|mysql-test)/.*|%{_libdir}/mysql/plugin/.*\\.so)$
 %filter_setup
 %endif
+
 
 %description
 MariaDB is a community developed branch of MySQL.
@@ -491,7 +484,7 @@ MariaDB is a community developed branch of MySQL.
 
 %if %{with test}
 %package          test
-Summary:          The test suite distributed with MariaD
+Summary:          The test suite distributed with MariaDB
 Group:            Applications/Databases
 Requires:         %{name}%{?_isa} = %{sameevr}
 Requires:         %{name}-common%{?_isa} = %{sameevr}
@@ -525,6 +518,7 @@ package contains the regression test suite distributed with
 the MariaDB sources.
 MariaDB is a community developed branch of MySQL.
 %endif
+
 
 %prep
 %setup -q -n mariadb-%{version}
@@ -662,9 +656,6 @@ cmake .  -DBUILD_CONFIG=mysql_release \
          -DTMPDIR=/var/tmp \
          %{?_hardened_build:-DWITH_MYSQLD_LDFLAGS="-pie -Wl,-z,relro,-z,now"}
 
-
-#%{!?with_tokudb: -DWITHOUT_TOKUDB=ON}\
-         #-DWITH_JEMALLOC=no \
 make %{?_smp_mflags} VERBOSE=1
 
 # debuginfo extraction scripts fail to find source files in their real
