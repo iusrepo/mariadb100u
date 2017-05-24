@@ -92,9 +92,6 @@
 %global mysqld_enabled_flag_file %{_localstatedir}/lib/rpm-state/mysqld_enabled
 %global mysqld_running_flag_file %{_localstatedir}/lib/rpm-state/mysqld_running
 
-%bcond_without mysql_names
-%bcond_with mysql-server_name
-
 # Make long macros shorter
 %global sameevr   %{epoch}:%{version}-%{release}
 %global compatver 10.0
@@ -190,20 +187,16 @@ Requires:         fileutils
 Requires:         grep
 Requires:         %{name}-common%{?_isa} = %{sameevr}
 
-%if %{with mysql_names}
 Provides:         mysql = %{sameevr}
 Provides:         mysql%{?_isa} = %{sameevr}
-Provides:         mysql-compat-client = %{sameevr}
-Provides:         mysql-compat-client%{?_isa} = %{sameevr}
-%endif
+Conflicts:        mysql < %{sameevr}
+Conflicts:        mysql-community-client
+Conflicts:        community-mysql
 
+# IUS things
 Provides:         %{real_name} = %{sameevr}
 Provides:         %{real_name}%{?_isa} = %{sameevr}
-
-
-# MySQL (with caps) is upstream's spelling of their own RPMs for mysql
-Conflicts:        community-mysql
-Conflicts:        mysql < %{basever}
+Conflicts:        %{real_name} < %{sameevr}
 
 # Filtering: https://fedoraproject.org/wiki/Packaging:AutoProvidesAndRequiresFiltering
 %if 0%{?fedora} > 14 || 0%{?rhel} > 6
@@ -228,20 +221,16 @@ contains the standard MariaDB/MySQL client programs and generic MySQL files.
 Summary:          The shared libraries required for MariaDB/MySQL clients
 Group:            Applications/Databases
 Requires:         %{name}-common%{?_isa} = %{sameevr}
-%if %{with mysql_names}
 Provides:         mysql-libs = %{sameevr}
 Provides:         mysql-libs%{?_isa} = %{sameevr}
-%endif
+Conflicts:        mysql-libs < %{sameevr}
+Conflicts:        mysql-community-libs
+Conflicts:        community-mysql-libs
+
+# IUS things
 Provides:         %{real_name}-libs = %{sameevr}
-Provides:         config(%{real_name}-libs) = %{sameevr}
 Provides:         %{real_name}-libs%{?_isa} = %{sameevr}
-%if %{without config}
-Provides:         config(%{real_name}-libs) = %{sameevr}
-%endif
-Conflicts:        MySQL-libs
-Conflicts:        mysql-libs < %{basever}
-Conflicts:        mariadb-libs < %{basever}
-Conflicts:        %{epoch}:mariadb-libs >= 1:5.5
+Conflicts:        %{real_name}-libs < %{sameevr}
 
 
 %description      libs
@@ -256,15 +245,17 @@ to a MariaDB/MySQL server. MariaDB is a community developed branch of MySQL.
 %package          config
 Summary:          The config files required by server and client
 Group:            Applications/Databases
-Conflicts:        MySQL-libs
-Conflicts:        mysql-libs < %{basever}
-Conflicts:        mariadb-libs < %{basever}
-Conflicts:        mariadb-libs < %{epoch}:%{basever}
-Conflicts:        %{epoch}:mariadb-libs < %{basever}
-Conflicts:        %{epoch}:mariadb-libs < %{epoch}:%{basever}
-Provides:         config(%{real_name}-libs) = %{sameevr}
+Provides:         mysql-config = %{sameevr}
+Provides:         mysql-config%{?_isa} = %{sameevr}
+Conflicts:        mysql-config < %{sameevr}
+Conflicts:        mysql-community-config
+Conflicts:        community-mysql-config
+
+# IUS things
 Provides:         %{real_name}-config = %{sameevr}
 Provides:         %{real_name}-config%{?_isa} = %{sameevr}
+Conflicts:        %{real_name}-config < %{sameevr}
+Conflicts:        %{real_name}-libs < %{sameevr}
 
 
 %description      config
@@ -280,10 +271,18 @@ package itself.
 Summary:          The shared files required by server and client
 Group:            Applications/Databases
 Requires:         %{name}-config = %{sameevr}
-#Requires:         %{_sysconfdir}/my.cnf
 Requires:         %{name}-config  = %{sameevr}
+Provides:         mysql-common = %{sameevr}
+Provides:         mysql-common%{?_isa} = %{sameevr}
+Conflicts:        mysql-common < %{sameevr}
+Conflicts:        mysql-community-common
+Conflicts:        community-mysql-common
+
+# IUS things
 Provides:         %{real_name}-common = %{sameevr}
 Provides:         %{real_name}-common%{?_isa} = %{sameevr}
+Conflicts:        %{real_name}-common < %{sameevr}
+
 
 %description      common
 The package provides the essential shared files for any MariaDB program.
@@ -296,8 +295,17 @@ You will need to install this package to use any other MariaDB package.
 Summary:          The error messages files required by server and embedded
 Group:            Applications/Databases
 Requires:         %{name}-common%{?_isa} = %{sameevr}
+Provides:         mysql-errmsg = %{sameevr}
+Provides:         mysql-errmsg%{?_isa} = %{sameevr}
+Conflicts:        mysql-errmsg < %{sameevr}
+Conflicts:        mysql-community-errmsg
+Conflicts:        community-mysql-errmsg
+
+# IUS things
 Provides:         %{real_name}-errmsg = %{sameevr}
 Provides:         %{real_name}-errmsg%{?_isa} = %{sameevr}
+Conflicts:        %{real_name}-errmsg < %{sameevr}
+
 
 %description      errmsg
 The package provides error messages files for the MariaDB daemon and the
@@ -333,23 +341,17 @@ Requires(posttrans): systemd
 # mysqlhotcopy needs DBI/DBD support
 Requires:         perl(DBI)
 Requires:         perl(DBD::mysql)
-%if %{with mysql-server_name}
-Provides:         mysql-server = %{sameevr}
-Provides:         mysql-server%{?_isa} = %{sameevr}
-%endif
-%if %{with mysql_names}
 Provides:         mysql-compat-server = %{sameevr}
 Provides:         mysql-compat-server%{?_isa} = %{sameevr}
-%endif
-Provides:         %{real_name}-server = %{sameevr}
-Provides:         %{real_name}-server%{?_isa} = %{sameevr}
-Provides:         config(%{real_name}-server) = %{sameevr}
-Conflicts:        MySQL-server
-Conflicts:        community-mysql-server
-Conflicts:        mysql-server < %{basever}
-
+Conflicts:        mysql-server < %{sameevr}
+Conflicts:        mysql-community-server
 Conflicts:        community-mysql-server
 Conflicts:        mariadb-galera-server
+
+# IUS things
+Provides:         %{real_name}-server = %{sameevr}
+Provides:         %{real_name}-server%{?_isa} = %{sameevr}
+Conflicts:        %{real_name}-server < %{sameevr}
 
 
 %description      server
@@ -368,6 +370,17 @@ Requires:         %{name}-server%{?_isa} = %{sameevr}
 # boost and Judy required for oograph
 BuildRequires:    boost-devel
 BuildRequires:    Judy-devel
+Provides:         mysql-oqgraph = %{sameevr}
+Provides:         mysql-oqgraph%{?_isa} = %{sameevr}
+Conflicts:        mysql-oqgraph < %{sameevr}
+Conflicts:        mysql-community-oqgraph
+Conflicts:        community-mysql-oqgraph
+
+# IUS things
+Provides:         %{pkg_name}-oqgraph = %{sameevr}
+Provides:         %{pkg_name}-oqgraph%{?_isa} = %{sameevr}
+Conflicts:        %{pkg_name}-oqgraph < %{sameevr}
+
 
 %description      oqgraph
 The package provides Open Query GRAPH engine (OQGRAPH) as plugin for MariaDB
@@ -384,15 +397,17 @@ Summary:          Files for development of MariaDB/MySQL applications
 Group:            Applications/Databases
 Requires:         %{name}-libs%{?_isa} = %{sameevr}
 Requires:         openssl-devel%{?_isa}
-%if %{with mysql_names}
 Provides:         mysql-devel = %{sameevr}
 Provides:         mysql-devel%{?_isa} = %{sameevr}
-%endif
+Conflicts:        mysql-devel < %{sameevr}
+Conflicts:        mysql-community-devel
+Conflicts:        community-mysql-devel
+
+# IUS things
 Provides:         %{real_name}-devel = %{sameevr}
 Provides:         %{real_name}-devel%{?_isa} = %{sameevr}
-Conflicts:        MySQL-devel
-Conflicts:        mysql-devel < %{basever}
-Conflicts:        community-mysql-devel
+Conflicts:        %{real_name}-devel < %{sameevr}
+
 
 %description      devel
 MariaDB is a multi-user, multi-threaded SQL database server. This
@@ -408,13 +423,16 @@ Summary:          MariaDB as an embeddable library
 Group:            Applications/Databases
 Requires:         %{name}-common%{?_isa} = %{sameevr}
 Requires:         %{name}-errmsg%{?_isa} = %{sameevr}
-%if %{with mysql_names}
 Provides:         mysql-embedded = %{sameevr}
 Provides:         mysql-embedded%{?_isa} = %{sameevr}
-%endif
+Conflicts:        mysql-embedded < %{sameevr}
+Conflicts:        mysql-community-embedded
+Conflicts:        community-mysql-embedded
+
+# IUS things
 Provides:         %{real_name}-embedded = %{sameevr}
 Provides:         %{real_name}-embedded%{?_isa} = %{sameevr}
-Conflicts:        MySQL-embedded
+Conflicts:        %{real_name}-embedded < %{sameevr}
 
 
 %description      embedded
@@ -429,15 +447,16 @@ Summary:          Development files for MariaDB as an embeddable library
 Group:            Applications/Databases
 Requires:         %{name}-embedded%{?_isa} = %{sameevr}
 Requires:         %{name}-devel%{?_isa} = %{sameevr}
-%if %{with mysql_names}
 Provides:         mysql-embedded-devel = %{sameevr}
 Provides:         mysql-embedded-devel%{?_isa} = %{sameevr}
-%endif
+Conflicts:        mysql-embedded-devel < %{sameevr}
+Conflicts:        mysql-community-embedded-devel
+Conflicts:        community-mysql-embedded-devel
+
+# IUS things
 Provides:         %{real_name}-embedded-devel = %{sameevr}
 Provides:         %{real_name}-embedded-devel%{?_isa} = %{sameevr}
-Conflicts:        MySQL-embedded-devel
-Conflicts:        mysql-embedded-devel < %{basever}
-Conflicts:        community-mysql-embedded-devel
+Conflicts:        %{real_name}-embedded-devel < %{sameevr}
 
 
 %description      embedded-devel
@@ -453,16 +472,16 @@ MariaDB is a community developed branch of MySQL.
 Summary:          MariaDB benchmark scripts and data
 Group:            Applications/Databases
 Requires:         %{name}%{?_isa} = %{sameevr}
-%if %{with mysql_names}
 Provides:         mysql-bench = %{sameevr}
 Provides:         mysql-bench%{?_isa} = %{sameevr}
-%endif
+Conflicts:        mysql-bench < %{sameevr}
+Conflicts:        mysql-community-bench
+Conflicts:        community-mysql-bench
+
+# IUS things
 Provides:         %{real_name}-bench = %{sameevr}
 Provides:         %{real_name}-bench%{?_isa} = %{sameevr}
-Conflicts:        MySQL-bench
-Conflicts:        mysql-bench < %{basever}
-
-Conflicts:        community-mysql-bench
+Conflicts:        %{real_name}-bench < %{sameevr}
 
 
 %description      bench
@@ -491,16 +510,16 @@ Requires:         perl(Socket)
 Requires:         perl(Sys::Hostname)
 Requires:         perl(Test::More)
 Requires:         perl(Time::HiRes)
-Conflicts:        community-mysql-test
-%if %{with mysql_names}
 Provides:         mysql-test = %{sameevr}
 Provides:         mysql-test%{?_isa} = %{sameevr}
-%endif
+Conflicts:        mysql-test < %{sameevr}
+Conflicts:        mysql-community-test
+Conflicts:        community-mysql-test
+
+# IUS things
 Provides:         %{real_name}-test = %{sameevr}
 Provides:         %{real_name}-test%{?_isa} = %{sameevr}
-Conflicts:        community-mysql-test
-Conflicts:        MySQL-test
-Conflicts:        mysql-test < %{basever}
+Conflicts:        %{real_name}-test < %{sameevr}
 
 
 %description      test
@@ -1206,6 +1225,7 @@ fi
 - Latest upstream
 - Remove obsoletes
 - Set %%old_logfile macro
+- Clean up provides and conflicts
 
 * Thu Mar 09 2017 Ben Harper <ben.harper@rackspace.com> - 1:10.0.30-1.ius
 - Latest upstream
