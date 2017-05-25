@@ -150,6 +150,7 @@ BuildRequires:    perl
 BuildRequires:    readline-devel
 BuildRequires:    systemtap-sdt-devel
 BuildRequires:    zlib-devel
+BuildRequires:    selinux-policy-devel
 # auth_pam.so plugin will be build if pam-devel is installed
 BuildRequires:    pam-devel
 %{?with_pcre:BuildRequires: pcre-devel >= 8.35}
@@ -1213,6 +1214,7 @@ fi
 - Macro clean up
 - Remove patch31, resolved upstream (MDEV-6262)
 - Remove jemalloc buildrequirement, not needed
+- Add BuildRequires selinux-policy-devel
 
 * Thu Mar 09 2017 Ben Harper <ben.harper@rackspace.com> - 1:10.0.30-1.ius
 - Latest upstream
