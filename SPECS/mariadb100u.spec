@@ -168,7 +168,6 @@ BuildRequires:    perl(Sys::Hostname)
 BuildRequires:    perl(Test::More)
 BuildRequires:    perl(Time::HiRes)
 %{?with_init_systemd:BuildRequires: systemd}
-BuildRequires:    jemalloc-devel
 
 Requires:         bash
 Requires:         fileutils
@@ -647,10 +646,9 @@ cmake .  -DBUILD_CONFIG=mysql_release \
          -DWITH_READLINE=ON \
          -DWITH_SSL=system \
          -DWITH_ZLIB=system \
-         -DWITH_JEMALLOC=auto \
 %{?with_pcre: -DWITH_PCRE=system}\
-%{!?with_tokudb: -DWITHOUT_TOKUDB=ON\ 
-         -DWITH_JEMALLOC=no}\
+         -DWITH_JEMALLOC=no \
+%{!?with_tokudb: -DWITHOUT_TOKUDB=ON}\
          -DTMPDIR=/var/tmp \
          %{?_hardened_build:-DWITH_MYSQLD_LDFLAGS="-pie -Wl,-z,relro,-z,now"}
 
@@ -1214,6 +1212,7 @@ fi
 - Clean up provides and conflicts
 - Macro clean up
 - Remove patch31, resolved upstream (MDEV-6262)
+- Remove jemalloc buildrequirement, not needed
 
 * Thu Mar 09 2017 Ben Harper <ben.harper@rackspace.com> - 1:10.0.30-1.ius
 - Latest upstream
