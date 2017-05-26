@@ -1025,8 +1025,8 @@ fi
 
 %if %{with common}
 %files common
-%doc README COPYING COPYING.LESSER README.mysql-license README.mysql-docs
-%doc storage/innobase/COPYING.Percona storage/innobase/COPYING.Google
+%license COPYING storage/innobase/COPYING.Percona storage/innobase/COPYING.Google
+%doc README README.mysql-license README.mysql-docs
 %dir %{_datadir}/%{pkg_name}
 %{_datadir}/%{pkg_name}/charsets
 %endif
@@ -1215,6 +1215,7 @@ fi
 - Remove patch31, resolved upstream (MDEV-6262)
 - Remove jemalloc buildrequirement, not needed
 - Add BuildRequires selinux-policy-devel
+- Fix license handling
 
 * Thu Mar 09 2017 Ben Harper <ben.harper@rackspace.com> - 1:10.0.30-1.ius
 - Latest upstream
