@@ -1223,6 +1223,7 @@ fi
 - Filter provides in el6 properly (Fedora)
 - JdbcMariaDB.jar test removed (Fedora)
 - BR multilib-rpm-config and use it for multilib workarounds (Fedora)
+- Sync mysql-prepare-db-dir.sh with Fedora
 
 * Thu May 25 2017 Carl George <carl.george@rackspace.com> - 1:10.0.31-1.ius
 - Latest upstream
