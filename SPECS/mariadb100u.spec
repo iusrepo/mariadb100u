@@ -8,10 +8,13 @@
 %{!?runselftest:%global runselftest 1}
 
 # In f20+ use unversioned docdirs, otherwise the old versioned one
-%global _pkgdocdirname %{name}%{!?_pkgdocdir:-%{version}}
-%{!?_pkgdocdir: %global _pkgdocdir %{_docdir}/%{name}-%{version}}
+%if 0%{?rhel} && 0%{?rhel} <= 7
+%global _pkgdocdirname %{name}-%{version}
+%else
+%global _pkgdocdirname %{name}
+%endif
 
-# use Full RELRO for all binaries (RHBZ#1092548)
+# Use Full RELRO for all binaries (RHBZ#1092548)
 %global _hardened_build 1
 
 # By default, patch(1) creates backup files when chunks apply with offsets.
@@ -46,7 +49,7 @@
 %if 0%{?fedora} >= 15 || 0%{?rhel} >= 7
 %bcond_without init_systemd
 %bcond_with init_sysv
-%global daemon_name %{pkg_name}
+%global daemon_name mariadb
 %global mysqld_unit mysqld
 %else
 %bcond_with init_systemd
@@ -86,7 +89,7 @@
 %global compatver 10.0
 %global bugfixver 31
 
-Name:             %{pkg_name}100u
+Name:             mariadb100u
 Version:          %{compatver}.%{bugfixver}
 Release:          2.ius%{?dist}
 Epoch:            1
@@ -104,7 +107,6 @@ Source3:          my.cnf.in
 Source5:          README.mysql-cnf
 Source6:          README.mysql-docs
 Source7:          README.mysql-license
-Source9:          mysql-embedded-check.c
 Source10:         mysql.tmpfiles.d.in
 Source11:         mysql.service.in
 Source12:         mysql-prepare-db-dir.sh
@@ -128,32 +130,29 @@ Patch1:           %{pkgnamepatch}-strmov.patch
 Patch2:           %{pkgnamepatch}-install-test.patch
 Patch3:           %{pkgnamepatch}-s390-tsc.patch
 Patch4:           %{pkgnamepatch}-logrotate.patch
-Patch5:           %{pkgnamepatch}-cipherspec.patch
-Patch6:           %{pkgnamepatch}-file-contents.patch
-Patch7:           %{pkgnamepatch}-dh1024.patch
-Patch8:           %{pkgnamepatch}-scripts.patch
+Patch5:           %{pkgnamepatch}-file-contents.patch
+Patch7:           %{pkgnamepatch}-scripts.patch
 
 # Patches specific for this mysql package
 Patch30:          %{pkgnamepatch}-errno.patch
 Patch32:          %{pkgnamepatch}-basedir.patch
-Patch33:          %{pkgnamepatch}-covscan-signexpr.patch
 Patch34:          %{pkgnamepatch}-covscan-stroverflow.patch
 Patch35:          %{pkgnamepatch}-config.patch
-Patch36:          %{pkgnamepatch}-ssltest.patch
 
 BuildRequires:    cmake
 BuildRequires:    libaio-devel
-BuildRequires:    openssl-devel
-BuildRequires:    ncurses-devel
-BuildRequires:    perl
 BuildRequires:    readline-devel
+BuildRequires:    ncurses-devel
 BuildRequires:    systemtap-sdt-devel
 BuildRequires:    zlib-devel
 BuildRequires:    multilib-rpm-config
 BuildRequires:    selinux-policy-devel
+%{?with_init_systemd:BuildRequires: systemd systemd-devel}
 # auth_pam.so plugin will be build if pam-devel is installed
 BuildRequires:    pam-devel
 %{?with_pcre:BuildRequires: pcre-devel >= 8.35}
+# Few utilities needs Perl
+BuildRequires:    perl
 # Tests requires time and ps and some perl modules
 BuildRequires:    procps
 BuildRequires:    time
@@ -168,7 +167,8 @@ BuildRequires:    perl(Socket)
 BuildRequires:    perl(Sys::Hostname)
 BuildRequires:    perl(Test::More)
 BuildRequires:    perl(Time::HiRes)
-%{?with_init_systemd:BuildRequires: systemd}
+# for running some openssl tests rhbz#1189180
+BuildRequires:    openssl openssl-devel
 
 Requires:         bash coreutils grep
 Requires:         %{name}-common%{?_isa} = %{sameevr}
@@ -525,16 +525,12 @@ MariaDB is a community developed branch of MySQL.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-#%patch5 -p1
-%patch6 -p1
-#%patch7 -p1
-%patch8 -p1
+%patch5 -p1
+%patch7 -p1
 %patch30 -p1
 %patch32 -p1
-#%patch33 -p1
 %patch34 -p1
 %patch35 -p1
-#%patch36 -p1
 
 sed -i -e 's/2.8.7/2.6.4/g' cmake/cpack_rpm.cmake
 
@@ -621,13 +617,8 @@ cmake .  -DBUILD_CONFIG=mysql_release \
          -DCMAKE_INSTALL_PREFIX="%{_prefix}" \
          -DINSTALL_SYSCONFDIR="%{_sysconfdir}" \
          -DINSTALL_SYSCONF2DIR="%{_sysconfdir}/my.cnf.d" \
-%if 0%{?fedora} >= 20
-         -DINSTALL_DOCDIR="share/doc/%{name}" \
-         -DINSTALL_DOCREADMEDIR="share/doc/%{name}" \
-%else
-         -DINSTALL_DOCDIR="share/doc/%{name}-%{version}" \
-         -DINSTALL_DOCREADMEDIR="share/doc/%{name}-%{version}" \
-%endif
+         -DINSTALL_DOCDIR="share/doc/%{_pkgdocdirname}" \
+         -DINSTALL_DOCREADMEDIR="share/doc/%{_pkgdocdirname}" \
          -DINSTALL_INCLUDEDIR=include/mysql \
          -DINSTALL_INFODIR=share/info \
          -DINSTALL_LIBDIR="%{_lib}/mysql" \
@@ -650,6 +641,7 @@ cmake .  -DBUILD_CONFIG=mysql_release \
 %{?with_pcre: -DWITH_PCRE=system}\
          -DWITH_JEMALLOC=no \
 %{!?with_tokudb: -DWITHOUT_TOKUDB=ON}\
+%{!?with_oqgraph: -DWITHOUT_OQGRAPH=ON}\
          -DTMPDIR=/var/tmp \
          %{?_hardened_build:-DWITH_MYSQLD_LDFLAGS="-pie -Wl,-z,relro,-z,now"}
 
@@ -693,7 +685,7 @@ fi
 # but that's pretty wacko --- see also %%{name}-file-contents.patch)
 install -p -m 644 Docs/INFO_SRC %{buildroot}%{_libdir}/mysql/
 install -p -m 644 Docs/INFO_BIN %{buildroot}%{_libdir}/mysql/
-rm -rf %{buildroot}%{_docdir}/%{name}-%{version}/MariaDB-server-%{version}/
+rm -r %{buildroot}%{_pkgdocdir}/MariaDB-server-%{version}/
 
 mkdir -p %{buildroot}%{logfiledir}
 chmod 0750 %{buildroot}%{logfiledir}
@@ -939,7 +931,6 @@ if [ $1 = 1 ]; then
     /sbin/chkconfig --add %{daemon_name}
 fi
 %endif
-/bin/chmod 0755 %{_localstatedir}/lib/mysql
 
 
 %preun server
@@ -1007,11 +998,11 @@ fi
 %{_mandir}/man1/mysqlshow.1*
 %{_mandir}/man1/mysqlslap.1*
 %{_mandir}/man1/my_print_defaults.1*
-%{_mandir}/man1/aria_chk.1.gz
-%{_mandir}/man1/aria_dump_log.1.gz
-%{_mandir}/man1/aria_ftdump.1.gz
-%{_mandir}/man1/aria_pack.1.gz
-%{_mandir}/man1/aria_read_log.1.gz
+%{_mandir}/man1/aria_chk.1*
+%{_mandir}/man1/aria_dump_log.1*
+%{_mandir}/man1/aria_ftdump.1*
+%{_mandir}/man1/aria_pack.1*
+%{_mandir}/man1/aria_read_log.1*
 
 %config(noreplace) %{_sysconfdir}/my.cnf.d/client.cnf
 %config(noreplace) %{_sysconfdir}/my.cnf.d/connect.cnf
@@ -1019,7 +1010,6 @@ fi
 
 %if %{with clibrary}
 %files libs
-%dir %{_libdir}/mysql
 %{_libdir}/mysql/libmysqlclient.so.*
 %{_sysconfdir}/ld.so.conf.d/*
 %endif
@@ -1028,8 +1018,8 @@ fi
 %files config
 # although the default my.cnf contains only server settings, we put it in the
 # common package because it can be used for client settings too.
-%config(noreplace) %{_sysconfdir}/my.cnf
 %dir %{_sysconfdir}/my.cnf.d
+%config(noreplace) %{_sysconfdir}/my.cnf
 %config(noreplace) %{_sysconfdir}/my.cnf.d/mysql-clients.cnf
 %endif
 
@@ -1037,6 +1027,7 @@ fi
 %files common
 %license COPYING storage/innobase/COPYING.Percona storage/innobase/COPYING.Google
 %doc README README.mysql-license README.mysql-docs
+%dir %{_libdir}/mysql
 %dir %{_datadir}/%{pkg_name}
 %{_datadir}/%{pkg_name}/charsets
 %endif
@@ -1608,7 +1599,7 @@ fi
 * Thu Feb 28 2013 Honza Horak <hhorak@redhat.com> 5.5.29-7
 - Use configured prefix value instead of guessing basedir
   in mysql_config
-Resolves: #916189
+  Resolves: #916189
 - Export dynamic columns and non-blocking API functions documented
   by upstream
 
