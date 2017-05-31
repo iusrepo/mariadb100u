@@ -799,6 +799,9 @@ rm -f %{buildroot}%{logrotateddir}/mysql
 # remove solaris files
 rm -rf %{buildroot}%{_datadir}/%{pkg_name}/solaris/
 
+# remove *.jar file from mysql-test
+rm -rf %{buildroot}%{_datadir}/mysql-test/plugin/connect/connect/std_data/JdbcMariaDB.jar
+
 %if %{without clibrary}
 rm -rf %{buildroot}%{_libdir}/mysql/libmysqlclient*.so.*
 rm -rf %{buildroot}%{_sysconfdir}/ld.so.conf.d
@@ -1222,6 +1225,7 @@ fi
 * Wed May 31 2017 Carl George <carl.george@rackspace.com> - 1:10.0.31-2.ius
 - More clean up of provides, conflicts, and requires
 - Filter provides in el6 properly (Fedora)
+- JdbcMariaDB.jar test removed (Fedora)
 
 * Thu May 25 2017 Carl George <carl.george@rackspace.com> - 1:10.0.31-1.ius
 - Latest upstream
