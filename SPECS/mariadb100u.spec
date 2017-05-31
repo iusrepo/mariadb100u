@@ -7,6 +7,9 @@
 # --nocheck is not possible (e.g. in koji build)
 %{!?runselftest:%global runselftest 1}
 
+# Set this to 1 to see which tests fail, but 0 on production ready build
+%global ignore_testsuite_result 0
+
 # In f20+ use unversioned docdirs, otherwise the old versioned one
 %if 0%{?rhel} && 0%{?rhel} <= 7
 %global _pkgdocdirname %{name}-%{version}
@@ -117,12 +120,9 @@ Source16:         mysql-compat.service.in
 Source17:         mysql-compat.conf.in
 Source18:         mysql.init.in
 Source50:         rh-skipped-tests-base.list
-Source51:         rh-skipped-tests-intel.list
-Source52:         rh-skipped-tests-arm.list
-Source53:         rh-skipped-tests-ppc-s390.list
-Source54:         rh-skipped-tests-ppc64le.list
-
-Source107: ius-skipped-tests.list
+Source51:         rh-skipped-tests-arm.list
+Source52:         rh-skipped-tests-ppc-s390.list
+Source60:         rh-skipped-tests-el7.list
 
 # Comments for these patches are in the patch files
 # Patches common for more mysql-like packages
@@ -549,26 +549,20 @@ sed -i -e 's/2.8.7/2.6.4/g' cmake/cpack_rpm.cmake
 rm -f mysql-test/t/ssl_8k_key-master.opt
 
 # generate a list of tests that fail, but are not disabled by upstream
-cat %{SOURCE50} > mysql-test/rh-skipped-tests.list
+cat %{SOURCE50} | tee mysql-test/rh-skipped-tests.list
 
 # disable some tests failing on different architectures
-%ifarch x86_64 i686
-cat %{SOURCE51} >> mysql-test/rh-skipped-tests.list
-%endif
-
 %ifarch %{arm} aarch64
-cat %{SOURCE52} >> mysql-test/rh-skipped-tests.list
+cat %{SOURCE51} | tee -a mysql-test/rh-skipped-tests.list
 %endif
 
 %ifarch ppc ppc64 ppc64p7 s390 s390x
-cat %{SOURCE53} >> mysql-test/rh-skipped-tests.list
+cat %{SOURCE52} | tee -a mysql-test/rh-skipped-tests.list
 %endif
 
-%ifarch ppc64le
-cat %{SOURCE54} >> mysql-test/rh-skipped-tests.list
+%if 0%{?rhel} && 0%{?rhel} <= 7
+cat %{SOURCE60} | tee -a mysql-test/rh-skipped-tests.list
 %endif
-
-cat %{SOURCE107} >> mysql-test/rh-skipped-tests.list
 
 cp %{SOURCE2} %{SOURCE3} %{SOURCE10} %{SOURCE11} %{SOURCE12} %{SOURCE13} \
    %{SOURCE14} %{SOURCE15} %{SOURCE16} %{SOURCE17} %{SOURCE18} scripts
@@ -877,12 +871,17 @@ export MTR_BUILD_THREAD=%{__isa_bits}
 # avoid redundant test runs with --binlog-format=mixed
 # increase timeouts to prevent unwanted failures during mass rebuilds
 (
+  set -e
   cd mysql-test
   perl ./mysql-test-run.pl --force --retry=0 --ssl \
-    --skip-test-list=rh-skipped-tests.list \
-    --suite-timeout=720 --testcase-timeout=30 \
+    --suite-timeout=720 --testcase-timeout=30 --skip-rpl \
     --mysqld=--binlog-format=mixed --force-restart \
-    --shutdown-timeout=60 --max-test-fail=0
+    --shutdown-timeout=60 --max-test-fail=0 \
+%if %{ignore_testsuite_result}
+    || :
+%else
+    --skip-test-list=rh-skipped-tests.list
+%endif
   # cmake build scripts will install the var cruft if left alone :-(
   rm -rf var
 )
@@ -1231,6 +1230,7 @@ fi
 - Fix paths in mysql_install_db script rhbz#1134328 (Fedora)
 - Add missing build requires
 - Do not create test database by default rhbz#1194611 (Fedora)
+- Sync test suite with Fedora
 
 * Thu May 25 2017 Carl George <carl.george@rackspace.com> - 1:10.0.31-1.ius
 - Latest upstream
