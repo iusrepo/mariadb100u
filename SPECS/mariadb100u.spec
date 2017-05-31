@@ -101,7 +101,6 @@ License:          GPLv2 with exceptions and LGPLv2 and BSD
 Source0:          http://ftp.utexas.edu/mariadb/mariadb-%{version}/source/mariadb-%{version}.tar.gz
 Source2:          mysql_config_multilib.sh
 Source3:          my.cnf.in
-Source4:          my_config.h
 Source5:          README.mysql-cnf
 Source6:          README.mysql-docs
 Source7:          README.mysql-license
@@ -150,6 +149,7 @@ BuildRequires:    perl
 BuildRequires:    readline-devel
 BuildRequires:    systemtap-sdt-devel
 BuildRequires:    zlib-devel
+BuildRequires:    multilib-rpm-config
 BuildRequires:    selinux-policy-devel
 # auth_pam.so plugin will be build if pam-devel is installed
 BuildRequires:    pam-devel
@@ -678,19 +678,16 @@ cp -p -f mysql_config.tmp %{buildroot}%{_bindir}/mysql_config
 chmod 755 %{buildroot}%{_bindir}/mysql_config
 
 # multilib header support
+for header in mysql/my_config.h mysql/private/config.h; do
+%multilib_fix_c_header --file %{_includedir}/$header
+done
+
+# multilib support for shell scripts
 # we only apply this to known Red Hat multilib arches, per bug #181335
-unamei=$(uname -i)
-%ifarch %{arm}
-unamei=arm
-%endif
-%ifarch %{arm} aarch64 %{ix86} x86_64 ppc %{power64} %{sparc} s390 s390x
-mv %{buildroot}%{_includedir}/mysql/my_config.h %{buildroot}%{_includedir}/mysql/my_config_${unamei}.h
-mv %{buildroot}%{_includedir}/mysql/private/config.h %{buildroot}%{_includedir}/mysql/private/my_config_${unamei}.h
-install -p -m 644 %{SOURCE4} %{buildroot}%{_includedir}/mysql/
-install -p -m 644 %{SOURCE4} %{buildroot}%{_includedir}/mysql/private/config.h
+if %multilib_capable; then
 mv %{buildroot}%{_bindir}/mysql_config %{buildroot}%{_bindir}/mysql_config-%{__isa_bits}
 install -p -m 0755 scripts/mysql_config_multilib %{buildroot}%{_bindir}/mysql_config
-%endif
+fi
 
 # install INFO_SRC, INFO_BIN into libdir (upstream thinks these are doc files,
 # but that's pretty wacko --- see also %%{name}-file-contents.patch)
@@ -1186,8 +1183,7 @@ fi
 
 %if %{with devel}
 %files devel
-%{_bindir}/mysql_config
-%{_bindir}/mysql_config-%{__isa_bits}
+%{_bindir}/mysql_config*
 %{_includedir}/mysql
 %{_datadir}/aclocal/mysql.m4
 %{_libdir}/mysql/libmysqlclient.so
@@ -1226,6 +1222,7 @@ fi
 - More clean up of provides, conflicts, and requires
 - Filter provides in el6 properly (Fedora)
 - JdbcMariaDB.jar test removed (Fedora)
+- BR multilib-rpm-config and use it for multilib workarounds (Fedora)
 
 * Thu May 25 2017 Carl George <carl.george@rackspace.com> - 1:10.0.31-1.ius
 - Latest upstream
