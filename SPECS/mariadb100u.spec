@@ -190,7 +190,7 @@ Conflicts:        mariadb < %{sameevr}
 %global __provides_exclude_from ^(%{_datadir}/(mysql|mysql-test)/.*|%{_libdir}/mysql/plugin/.*\\.so)$
 %else
 %filter_from_requires /perl(\(hostnames\|lib::mtr\|lib::v1\|mtr_\|My::\)/d
-%filter_provides_in -P (%{_datadir}/(mysql|mysql-test)/.*|%{_libdir}/mysql/plugin/.*\\.so)$
+%filter_provides_in -P (%{_datadir}/(mysql|mysql-test)/.*|%{_libdir}/mysql/plugin/.*\.so)
 %filter_setup
 %endif
 
@@ -1221,6 +1221,7 @@ fi
 %changelog
 * Wed May 31 2017 Carl George <carl.george@rackspace.com> - 1:10.0.31-2.ius
 - More clean up of provides, conflicts, and requires
+- Filter provides in el6 properly (Fedora)
 
 * Thu May 25 2017 Carl George <carl.george@rackspace.com> - 1:10.0.31-1.ius
 - Latest upstream
