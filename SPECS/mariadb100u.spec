@@ -567,6 +567,7 @@ cat %{SOURCE107} >> mysql-test/rh-skipped-tests.list
 cp %{SOURCE2} %{SOURCE3} %{SOURCE10} %{SOURCE11} %{SOURCE12} %{SOURCE13} \
    %{SOURCE14} %{SOURCE15} %{SOURCE16} %{SOURCE17} %{SOURCE18} scripts
 
+
 %build
 
 # fail quickly and obviously if user tries to build as root
@@ -663,6 +664,7 @@ for e in innobase xtradb ; do
     cp -p "storage/$e/pars/$f" "storage/$e/$f"
   done
 done
+
 
 %install
 make DESTDIR=%{buildroot} install
@@ -853,6 +855,7 @@ rm -rf %{buildroot}%{_datadir}/mysql-test
 rm -f %{buildroot}%{_mandir}/man1/mysql_client_test.1*
 %endif
 
+
 %check
 %if %{with test}
 %if %runselftest
@@ -883,6 +886,7 @@ export MTR_BUILD_THREAD=%{__isa_bits}
 )
 %endif
 %endif
+
 
 %pre server
 /usr/sbin/groupadd -g 27 -o -r mysql >/dev/null 2>&1 || :
@@ -921,9 +925,11 @@ fi
 %post libs -p /sbin/ldconfig
 %endif
 
+
 %if %{with embedded}
 %post embedded -p /sbin/ldconfig
 %endif
+
 
 %post server
 %if %{with init_systemd}
@@ -936,6 +942,7 @@ fi
 %endif
 /bin/chmod 0755 %{_localstatedir}/lib/mysql
 
+
 %preun server
 %if %{with init_systemd}
 %systemd_preun %{daemon_name}.service
@@ -947,13 +954,16 @@ if [ $1 = 0 ]; then
 fi
 %endif
 
+
 %if %{with clibrary}
 %postun libs -p /sbin/ldconfig
 %endif
 
+
 %if %{with embedded}
 %postun embedded -p /sbin/ldconfig
 %endif
+
 
 %postun server
 %if %{with init_systemd}
@@ -964,6 +974,7 @@ if [ $1 -ge 1 ]; then
     /sbin/service %{daemon_name} condrestart >/dev/null 2>&1 || :
 fi
 %endif
+
 
 %if %{with client}
 %files
@@ -1057,6 +1068,7 @@ fi
 %lang(sv) %{_datadir}/%{pkg_name}/swedish
 %lang(uk) %{_datadir}/%{pkg_name}/ukrainian
 %endif
+
 
 %files server
 %doc support-files/*.cnf README.mysql-cnf
@@ -1169,6 +1181,7 @@ fi
 %{_libdir}/mysql/plugin/ha_oqgraph.so
 %endif
 
+
 %if %{with devel}
 %files devel
 %{_bindir}/mysql_config
@@ -1204,6 +1217,7 @@ fi
 %attr(-,mysql,mysql) %{_datadir}/mysql-test
 %{_mandir}/man1/mysql_client_test.1*
 %endif
+
 
 %changelog
 * Thu May 25 2017 Carl George <carl.george@rackspace.com> - 1:10.0.31-1.ius
