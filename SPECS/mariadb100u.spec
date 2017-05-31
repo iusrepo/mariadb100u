@@ -139,6 +139,7 @@ Patch30:          %{pkgnamepatch}-errno.patch
 Patch32:          %{pkgnamepatch}-basedir.patch
 Patch34:          %{pkgnamepatch}-covscan-stroverflow.patch
 Patch35:          %{pkgnamepatch}-config.patch
+Patch37:          %{pkgnamepatch}-notestdb.patch
 
 BuildRequires:    cmake
 BuildRequires:    libaio-devel
@@ -540,6 +541,7 @@ MariaDB is a community developed branch of MySQL.
 %patch32 -p1
 %patch34 -p1
 %patch35 -p1
+%patch37 -p1
 
 sed -i -e 's/2.8.7/2.6.4/g' cmake/cpack_rpm.cmake
 
@@ -1228,6 +1230,7 @@ fi
 - Embedded-devel should require libaio-devel rhbz#1290517 (Fedora)
 - Fix paths in mysql_install_db script rhbz#1134328 (Fedora)
 - Add missing build requires
+- Do not create test database by default rhbz#1194611 (Fedora)
 
 * Thu May 25 2017 Carl George <carl.george@rackspace.com> - 1:10.0.31-1.ius
 - Latest upstream
