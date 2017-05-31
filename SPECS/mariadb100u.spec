@@ -442,6 +442,8 @@ Summary:          Development files for MariaDB as an embeddable library
 Group:            Applications/Databases
 Requires:         %{name}-embedded%{?_isa} = %{sameevr}
 Requires:         %{name}-devel%{?_isa} = %{sameevr}
+# embedded-devel should require libaio-devel (rhbz#1290517)
+Requires:         libaio-devel
 
 # other package names
 Conflicts:        mysql-community-embedded-devel
@@ -1218,6 +1220,7 @@ fi
 - BR multilib-rpm-config and use it for multilib workarounds (Fedora)
 - Sync mysql-prepare-db-dir.sh with Fedora
 - Add explicit EVR requirement in main package for -libs rhbz#1406320 (Fedora)
+- Embedded-devel should require libaio-devel rhbz#1290517 (Fedora)
 
 * Thu May 25 2017 Carl George <carl.george@rackspace.com> - 1:10.0.31-1.ius
 - Latest upstream
