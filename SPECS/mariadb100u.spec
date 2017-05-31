@@ -172,6 +172,8 @@ BuildRequires:    openssl openssl-devel
 
 Requires:         bash coreutils grep
 Requires:         %{name}-common%{?_isa} = %{sameevr}
+# Explicit EVR requirement for -libs is needed for RHBZ#1406320
+Requires:         %{name}-libs%{?_isa} = %{sameevr}
 
 # other package names
 Conflicts:        MariaDB-client
@@ -1215,6 +1217,7 @@ fi
 - JdbcMariaDB.jar test removed (Fedora)
 - BR multilib-rpm-config and use it for multilib workarounds (Fedora)
 - Sync mysql-prepare-db-dir.sh with Fedora
+- Add explicit EVR requirement in main package for -libs rhbz#1406320 (Fedora)
 
 * Thu May 25 2017 Carl George <carl.george@rackspace.com> - 1:10.0.31-1.ius
 - Latest upstream
