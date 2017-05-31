@@ -132,6 +132,7 @@ Patch3:           %{pkgnamepatch}-s390-tsc.patch
 Patch4:           %{pkgnamepatch}-logrotate.patch
 Patch5:           %{pkgnamepatch}-file-contents.patch
 Patch7:           %{pkgnamepatch}-scripts.patch
+Patch8:           %{pkgnamepatch}-install-db-sharedir.patch
 
 # Patches specific for this mysql package
 Patch30:          %{pkgnamepatch}-errno.patch
@@ -531,6 +532,7 @@ MariaDB is a community developed branch of MySQL.
 %patch4 -p1
 %patch5 -p1
 %patch7 -p1
+%patch8 -p1
 %patch30 -p1
 %patch32 -p1
 %patch34 -p1
@@ -1221,6 +1223,7 @@ fi
 - Sync mysql-prepare-db-dir.sh with Fedora
 - Add explicit EVR requirement in main package for -libs rhbz#1406320 (Fedora)
 - Embedded-devel should require libaio-devel rhbz#1290517 (Fedora)
+- Fix paths in mysql_install_db script rhbz#1134328 (Fedora)
 
 * Thu May 25 2017 Carl George <carl.george@rackspace.com> - 1:10.0.31-1.ius
 - Latest upstream
