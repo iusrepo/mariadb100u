@@ -147,6 +147,7 @@ BuildRequires:    ncurses-devel
 BuildRequires:    systemtap-sdt-devel
 BuildRequires:    zlib-devel
 BuildRequires:    multilib-rpm-config
+BuildRequires:    krb5-devel
 BuildRequires:    selinux-policy-devel
 %{?with_init_systemd:BuildRequires: systemd systemd-devel}
 # auth_pam.so plugin will be build if pam-devel is installed
@@ -164,10 +165,12 @@ BuildRequires:    perl(File::Temp)
 BuildRequires:    perl(Data::Dumper)
 BuildRequires:    perl(Getopt::Long)
 BuildRequires:    perl(IPC::Open3)
+BuildRequires:    perl(Memoize)
 BuildRequires:    perl(Socket)
 BuildRequires:    perl(Sys::Hostname)
 BuildRequires:    perl(Test::More)
 BuildRequires:    perl(Time::HiRes)
+BuildRequires:    perl(Symbol)
 # for running some openssl tests rhbz#1189180
 BuildRequires:    openssl openssl-devel
 
@@ -1224,6 +1227,7 @@ fi
 - Add explicit EVR requirement in main package for -libs rhbz#1406320 (Fedora)
 - Embedded-devel should require libaio-devel rhbz#1290517 (Fedora)
 - Fix paths in mysql_install_db script rhbz#1134328 (Fedora)
+- Add missing build requires
 
 * Thu May 25 2017 Carl George <carl.george@rackspace.com> - 1:10.0.31-1.ius
 - Latest upstream
