@@ -90,11 +90,11 @@
 # Make long macros shorter
 %global sameevr   %{epoch}:%{version}-%{release}
 %global compatver 10.0
-%global bugfixver 31
+%global bugfixver 32
 
 Name:             mariadb100u
 Version:          %{compatver}.%{bugfixver}
-Release:          2.ius%{?dist}
+Release:          1.ius%{?dist}
 Epoch:            1
 
 Summary:          A community developed branch of MySQL
@@ -137,7 +137,6 @@ Patch8:           %{pkgnamepatch}-install-db-sharedir.patch
 # Patches specific for this mysql package
 Patch30:          %{pkgnamepatch}-errno.patch
 Patch32:          %{pkgnamepatch}-basedir.patch
-Patch34:          %{pkgnamepatch}-covscan-stroverflow.patch
 Patch35:          %{pkgnamepatch}-config.patch
 Patch37:          %{pkgnamepatch}-notestdb.patch
 
@@ -539,7 +538,6 @@ MariaDB is a community developed branch of MySQL.
 %patch8 -p1
 %patch30 -p1
 %patch32 -p1
-%patch34 -p1
 %patch35 -p1
 %patch37 -p1
 
@@ -1219,6 +1217,10 @@ fi
 
 
 %changelog
+* Tue Aug 08 2017 Ben Harper <ben.harper@rackspace.com> - 1:10.0.32-1.ius
+- Latest upstream
+- remove Patch34, patched upstream
+
 * Wed May 31 2017 Carl George <carl.george@rackspace.com> - 1:10.0.31-2.ius
 - More clean up of provides, conflicts, and requires
 - Filter provides in el6 properly (Fedora)
