@@ -90,7 +90,7 @@
 # Make long macros shorter
 %global sameevr   %{epoch}:%{version}-%{release}
 %global compatver 10.0
-%global bugfixver 32
+%global bugfixver 33
 
 Name:             mariadb100u
 Version:          %{compatver}.%{bugfixver}
@@ -127,7 +127,6 @@ Source60:         rh-skipped-tests-el7.list
 # Comments for these patches are in the patch files
 # Patches common for more mysql-like packages
 Patch1:           %{pkgnamepatch}-strmov.patch
-Patch2:           %{pkgnamepatch}-install-test.patch
 Patch3:           %{pkgnamepatch}-s390-tsc.patch
 Patch4:           %{pkgnamepatch}-logrotate.patch
 Patch5:           %{pkgnamepatch}-file-contents.patch
@@ -530,7 +529,6 @@ MariaDB is a community developed branch of MySQL.
 %setup -q -n mariadb-%{version}
 
 %patch1 -p1
-%patch2 -p1
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
@@ -1217,6 +1215,11 @@ fi
 
 
 %changelog
+* Tue Oct 31 2017 Ben Harper <ben.harper@rackspace.com> - 1:10.0.33-1.ius
+- Latest upstream
+- remove Patch2, addressed upstream
+- update Patch8
+
 * Tue Aug 08 2017 Ben Harper <ben.harper@rackspace.com> - 1:10.0.32-1.ius
 - Latest upstream
 - remove Patch34, patched upstream
