@@ -90,7 +90,7 @@
 # Make long macros shorter
 %global sameevr   %{epoch}:%{version}-%{release}
 %global compatver 10.0
-%global bugfixver 33
+%global bugfixver 34
 
 Name:             mariadb100u
 Version:          %{compatver}.%{bugfixver}
@@ -1215,6 +1215,9 @@ fi
 
 
 %changelog
+* Tue Jan 30 2018 Ben Harper <ben.harper@rackspace.com> - 1:10.0.34-1.ius
+- Latest upstream
+
 * Tue Oct 31 2017 Ben Harper <ben.harper@rackspace.com> - 1:10.0.33-1.ius
 - Latest upstream
 - remove Patch2, addressed upstream
