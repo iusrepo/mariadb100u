@@ -94,7 +94,7 @@
 
 Name:             mariadb100u
 Version:          %{compatver}.%{bugfixver}
-Release:          1.ius%{?dist}
+Release:          1%{?dist}
 Epoch:            1
 
 Summary:          A community developed branch of MySQL
