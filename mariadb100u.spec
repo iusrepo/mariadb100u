@@ -90,7 +90,7 @@
 # Make long macros shorter
 %global sameevr   %{epoch}:%{version}-%{release}
 %global compatver 10.0
-%global bugfixver 34
+%global bugfixver 38
 
 Name:             mariadb100u
 Version:          %{compatver}.%{bugfixver}
@@ -103,7 +103,7 @@ URL:              http://mariadb.org
 # not only GPL code.  See README.mysql-license
 License:          GPLv2 with exceptions and LGPLv2 and BSD
 
-Source0:          http://ftp.utexas.edu/mariadb/mariadb-%{version}/source/mariadb-%{version}.tar.gz
+Source0:          https://mirrors.osuosl.org/pub/mariadb/mariadb-%{version}/source/mariadb-%{version}.tar.gz
 Source2:          mysql_config_multilib.sh
 Source3:          my.cnf.in
 Source5:          README.mysql-cnf
@@ -1203,6 +1203,9 @@ fi
 
 
 %changelog
+* Thu Aug 15 2019 Carl George <carl@george.computer> - 1:10.0.38-1
+- Latest upstream
+
 * Tue Jan 30 2018 Ben Harper <ben.harper@rackspace.com> - 1:10.0.34-1.ius
 - Latest upstream
 
